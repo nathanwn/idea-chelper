@@ -25,7 +25,13 @@ java {
 
 intellij {
     version = '2021.2'
-    plugins = ['java']
+    plugins = ['com.intellij.java']
+}
+
+tasks.named('runPluginVerifier') {
+    ideVersions = [
+        'IC-2021.2.4',
+    ]
 }
 
 buildSearchableOptions {

@@ -22,6 +22,8 @@
         </component>
     </project-components>
 
+    <depends>com.intellij.modules.java</depends>
+
     <actions>
         <!-- Add your actions here -->
         <action id="newTaskCustom" class="net.egork.chelper.actions.NewTaskAction" text="Task"
