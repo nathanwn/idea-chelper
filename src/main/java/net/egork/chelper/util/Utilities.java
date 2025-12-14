@@ -31,7 +31,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import net.egork.chelper.ChromeParser;
 import net.egork.chelper.ProjectData;
 import net.egork.chelper.actions.TopCoderAction;
 import net.egork.chelper.checkers.TokenChecker;
@@ -46,7 +45,12 @@ import net.egork.chelper.tester.NewTester;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +81,7 @@ public class Utilities {
                     CodeGenerationUtilities.createTestCaseClassTemplateIfNeeded(project);
                     CodeGenerationUtilities.createTopCoderTaskTemplateIfNeeded(project);
                     CodeGenerationUtilities.createTopCoderTestCaseClassTemplateIfNeeded(project);
-                    ChromeParser.checkInstalled(project, configuration);
+                    checkInstalled(project, configuration);
                 }
             }
 
@@ -86,6 +90,46 @@ public class Utilities {
                 eligibleProjects.remove(project);
             }
         });
+    }
+
+    public static void checkInstalled(Project project, ProjectData configuration) {
+        if (!configuration.extensionProposed) {
+            JPanel panel = new JPanel(new BorderLayout(15, 15));
+            JLabel description = new JLabel("<html>You can now use new CHelper extension to parse<br>" +
+                    "tasks directly from Google Chrome<br>(currently supported - Yandex.Contest, Codeforces and HackerRank)<br><br>Do you want to install it?</html>");
+            JButton download = new JButton("Download");
+            JButton close = new JButton("Close");
+            JPanel buttonPanel = new JPanel(new BorderLayout());
+            buttonPanel.add(download, BorderLayout.WEST);
+            buttonPanel.add(close, BorderLayout.EAST);
+            panel.add(buttonPanel, BorderLayout.SOUTH);
+            panel.add(description, BorderLayout.CENTER);
+            final JDialog dialog = new JDialog();
+            close.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    dialog.setVisible(false);
+                }
+            });
+            download.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(new URL("https://chrome.google.com/webstore/detail/chelper-extension/eicjndbmlajfjdhephbcjdeegmmoadip").toURI());
+                        } catch (IOException ignored) {
+                        } catch (URISyntaxException ignored) {
+                        }
+                    }
+                    dialog.setVisible(false);
+                }
+            });
+            panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            dialog.setContentPane(panel);
+            dialog.pack();
+            Point center = Utilities.getLocation(project, panel.getSize());
+            dialog.setLocation(center);
+            dialog.setVisible(true);
+            configuration.completeExtensionProposal(project);
+        }
     }
 
     public static PsiElement getPsiElement(Project project, String classFQN) {
