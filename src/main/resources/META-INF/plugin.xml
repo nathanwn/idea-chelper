@@ -17,9 +17,6 @@
         <component>
             <implementation-class>net.egork.chelper.AutoSwitcher</implementation-class>
         </component>
-        <component>
-            <implementation-class>net.egork.chelper.ChromeParser</implementation-class>
-        </component>
     </project-components>
 
     <depends>com.intellij.modules.java</depends>

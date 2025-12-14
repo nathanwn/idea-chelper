@@ -2,7 +2,6 @@ package net.egork.chelper;
 
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.WindowManager;
 import net.egork.chelper.actions.NewTaskDefaultAction;
@@ -10,28 +9,24 @@ import net.egork.chelper.parser.*;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.util.Messenger;
 import net.egork.chelper.util.Utilities;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author egorku@yandex-team.ru
- */
-public class ChromeParser implements ProjectComponent {
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.Service;
+
+@Service(Service.Level.PROJECT)
+public final class ChromeParser implements Disposable {
     private static final int PORT = 4243;
     private static final Map<String, Parser> TASK_PARSERS;
 
@@ -55,26 +50,13 @@ public class ChromeParser implements ProjectComponent {
     }
 
     private final Project project;
-    private ServerSocket serverSocket;
+    ServerSocket serverSocket;
 
     public ChromeParser(Project project) {
         this.project = project;
     }
 
-    public void initComponent() {
-        // TODO: insert component initialization logic here
-    }
-
-    public void disposeComponent() {
-        // TODO: insert component disposal logic here
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return "ChromeParser";
-    }
-
-    public void projectOpened() {
+    public void startServer() {
         if (ProjectData.load(project) == null) {
             return;
         }
@@ -136,12 +118,12 @@ public class ChromeParser implements ProjectComponent {
         }
     }
 
-    public void projectClosed() {
+    @Override
+    public void dispose() {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
-            } catch (IOException e) {
-            }
+            } catch (IOException e) {}
         }
     }
 }
