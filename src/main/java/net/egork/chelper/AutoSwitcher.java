@@ -1,10 +1,10 @@
 package net.egork.chelper;
 
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunManagerListener;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.impl.RunManagerImpl;
-import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -22,6 +22,8 @@ import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.TaskUtilities;
 import net.egork.chelper.util.Utilities;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Egor Kulikov (egor@egork.net)
@@ -67,22 +69,23 @@ public class AutoSwitcher implements ProjectComponent {
                         if (busy || file == null) {
                             return;
                         }
-                        RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(project);
-                        for (RunConfiguration configuration : runManager.getAllConfigurations()) {
+                        final RunManager runManager = RunManager.getInstance(project);
+                        List<RunnerAndConfigurationSettings> allSettings = RunManager
+                                .getInstance(project).getAllSettings();
+                        for (RunnerAndConfigurationSettings settings : allSettings) {
+                            @NotNull RunConfiguration configuration = settings.getConfiguration();
                             if (configuration instanceof TopCoderConfiguration) {
                                 TopCoderTask task = ((TopCoderConfiguration) configuration).getConfiguration();
                                 if (task != null && file.equals(TaskUtilities.getFile(Utilities.getData(project).defaultDirectory, task.name, project))) {
                                     busy = true;
-                                    runManager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(runManager,
-                                            configuration, false));
+                                    runManager.setSelectedConfiguration(settings);
                                     busy = false;
                                 }
                             } else if (configuration instanceof TaskConfiguration) {
                                 Task task = ((TaskConfiguration) configuration).getConfiguration();
                                 if (task != null && file.equals(FileUtilities.getFileByFQN(task.taskClass, configuration.getProject()))) {
                                     busy = true;
-                                    runManager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(runManager,
-                                            configuration, false));
+                                    runManager.setSelectedConfiguration(settings);
                                     busy = false;
                                     return;
                                 }
