@@ -3,10 +3,10 @@ package net.egork.chelper.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cojac.CojacAgent;
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.impl.RunManagerImpl;
-import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -180,19 +180,27 @@ public class Utilities {
     }
 
     public static RunnerAndConfigurationSettings createConfiguration(Task task, boolean setActive, Project project) {
-        RunManagerImpl manager = RunManagerImpl.getInstanceImpl(project);
+        RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings old = manager.findConfigurationByName(task.name);
         if (old != null) {
             manager.removeConfiguration(old);
         }
-        RunnerAndConfigurationSettingsImpl configuration = new RunnerAndConfigurationSettingsImpl(manager,
-                new TaskConfiguration(task.name, project, task,
-                        TaskConfigurationType.INSTANCE.getConfigurationFactories()[0]), false);
-        manager.addConfiguration(configuration, false);
-        if (setActive) {
-            manager.setActiveConfiguration(configuration);
+        ConfigurationFactory configurationFactory = TaskConfigurationType.INSTANCE.getConfigurationFactories()[0];
+        RunnerAndConfigurationSettings settings = manager.createConfiguration(task.name, configurationFactory);
+        RunConfiguration runConfiguration = settings.getConfiguration();
+        if (runConfiguration instanceof TaskConfiguration) {
+            TaskConfiguration taskConfiguration = (TaskConfiguration) runConfiguration;
+            taskConfiguration.setName(task.name);
+            taskConfiguration.setConfiguration(task);
+        } else {
+            throw new IllegalStateException("Factory did not produce TaskConfiguration.");
         }
-        return configuration;
+
+        manager.addConfiguration(settings);
+        if (setActive) {
+            manager.setSelectedConfiguration(settings);
+        }
+        return settings;
     }
 
     public static Parser getDefaultParser() {
@@ -222,19 +230,27 @@ public class Utilities {
     }
 
     public static RunnerAndConfigurationSettings createConfiguration(TopCoderTask task, boolean setActive, Project project) {
-        RunManagerImpl manager = RunManagerImpl.getInstanceImpl(project);
+        RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings old = manager.findConfigurationByName(task.name);
         if (old != null) {
             manager.removeConfiguration(old);
         }
-        RunnerAndConfigurationSettingsImpl configuration = new RunnerAndConfigurationSettingsImpl(manager,
-                new TopCoderConfiguration(task.name, project, task,
-                        TopCoderConfigurationType.INSTANCE.getConfigurationFactories()[0]), false);
-        manager.addConfiguration(configuration, false);
-        if (setActive) {
-            manager.setActiveConfiguration(configuration);
+        ConfigurationFactory configurationFactory = TopCoderConfigurationType.INSTANCE.getConfigurationFactories()[0];
+        RunnerAndConfigurationSettings settings = manager.createConfiguration(task.name, configurationFactory);
+        RunConfiguration runConfiguration = settings.getConfiguration();
+        if (runConfiguration instanceof TopCoderConfiguration) {
+            TopCoderConfiguration taskConfiguration = (TopCoderConfiguration) runConfiguration;
+            taskConfiguration.setName(task.name);
+            taskConfiguration.setConfiguration(task);
+        } else {
+            throw new IllegalStateException("Factory did not produce TopCoderConfiguration.");
         }
-        return configuration;
+
+        manager.addConfiguration(settings);
+        if (setActive) {
+            manager.setSelectedConfiguration(settings);
+        }
+        return settings;
     }
 
     public static String getSimpleName(String className) {

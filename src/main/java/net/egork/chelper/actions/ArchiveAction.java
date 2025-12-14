@@ -1,9 +1,8 @@
 package net.egork.chelper.actions;
 
+import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.impl.RunManagerImpl;
-import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -23,8 +22,10 @@ import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.Messenger;
 import net.egork.chelper.util.TaskUtilities;
 import net.egork.chelper.util.Utilities;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Egor Kulikov (kulikov@devexperts.com)
@@ -35,7 +36,7 @@ public class ArchiveAction extends AnAction {
             return;
         }
         final Project project = Utilities.getProject(e.getDataContext());
-        final RunManagerImpl manager = RunManagerImpl.getInstanceImpl(project);
+        final RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings selectedConfiguration =
                 manager.getSelectedConfiguration();
         if (selectedConfiguration == null || !Utilities.isSupported(selectedConfiguration.getConfiguration())) {
@@ -88,7 +89,7 @@ public class ArchiveAction extends AnAction {
                             taskFile.delete(this);
                         }
                         manager.removeConfiguration(manager.getSelectedConfiguration());
-                        setOtherConfiguration(manager, task);
+                        setOtherConfiguration(manager, task, project);
                         Messenger.publishMessage("Configuration '" + configuration.getName() + "' successfully archived",
                                 NotificationType.INFORMATION);
                     } catch (IOException e) {
@@ -129,7 +130,7 @@ public class ArchiveAction extends AnAction {
                             taskFile.delete(this);
                         }
                         manager.removeConfiguration(manager.getSelectedConfiguration());
-                        setOtherConfiguration(manager, task);
+                        setOtherConfiguration(manager, task, project);
                         Messenger.publishMessage("Configuration " + configuration.getName() + " successfully archived",
                                 NotificationType.INFORMATION);
                     } catch (IOException e) {
@@ -169,41 +170,47 @@ public class ArchiveAction extends AnAction {
         return TaskUtilities.canonize(yearAndMonth) + "/" + TaskUtilities.canonize(task.date + " - " + (task.contestName.length() == 0 ? "unsorted" : task.contestName));
     }
 
-    public static void setOtherConfiguration(RunManagerImpl manager, Task task) {
-        RunConfiguration[] allConfigurations = manager.getAllConfigurations();
-        for (RunConfiguration configuration : allConfigurations) {
+    public static void setOtherConfiguration(RunManager manager, Task task, Project project) {
+        List<RunnerAndConfigurationSettings> allSettings = RunManager
+                .getInstance(project).getAllSettings();
+        for (RunnerAndConfigurationSettings settings : allSettings) {
+            @NotNull RunConfiguration configuration = settings.getConfiguration();
             if (configuration instanceof TaskConfiguration) {
                 Task other = ((TaskConfiguration) configuration).getConfiguration();
                 if (!task.contestName.equals(other.contestName)) {
                     continue;
                 }
-                manager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(manager, configuration, false));
+                manager.setSelectedConfiguration(settings);
                 return;
             }
         }
-        for (RunConfiguration configuration : allConfigurations) {
+        for (RunnerAndConfigurationSettings settings : allSettings) {
+            @NotNull RunConfiguration configuration = settings.getConfiguration();
             if (configuration instanceof TaskConfiguration || configuration instanceof TopCoderConfiguration) {
-                manager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(manager, configuration, false));
+                manager.setSelectedConfiguration(settings);
                 return;
             }
         }
     }
 
-    public static void setOtherConfiguration(RunManagerImpl manager, TopCoderTask task) {
-        RunConfiguration[] allConfigurations = manager.getAllConfigurations();
-        for (RunConfiguration configuration : allConfigurations) {
+    public static void setOtherConfiguration(RunManager manager, TopCoderTask task, Project project) {
+        List<RunnerAndConfigurationSettings> allSettings = RunManager
+                .getInstance(project).getAllSettings();
+        for (RunnerAndConfigurationSettings settings : allSettings) {
+            @NotNull RunConfiguration configuration = settings.getConfiguration();
             if (configuration instanceof TopCoderConfiguration) {
                 TopCoderTask other = ((TopCoderConfiguration) configuration).getConfiguration();
                 if (!task.contestName.equals(other.contestName)) {
                     continue;
                 }
-                manager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(manager, configuration, false));
+                manager.setSelectedConfiguration(settings);
                 return;
             }
         }
-        for (RunConfiguration configuration : allConfigurations) {
+        for (RunnerAndConfigurationSettings settings : allSettings) {
+            @NotNull RunConfiguration configuration = settings.getConfiguration();
             if (configuration instanceof TaskConfiguration || configuration instanceof TopCoderConfiguration) {
-                manager.setActiveConfiguration(new RunnerAndConfigurationSettingsImpl(manager, configuration, false));
+                manager.setSelectedConfiguration(settings);
                 return;
             }
         }

@@ -76,7 +76,7 @@ public class DeleteTaskAction extends AnAction {
                             taskFile.delete(this);
                         }
                         manager.removeConfiguration(manager.getSelectedConfiguration());
-                        ArchiveAction.setOtherConfiguration(manager, task);
+                        ArchiveAction.setOtherConfiguration(manager, task, project);
                     } catch (IOException ignored) {
                     }
                 }
@@ -104,7 +104,7 @@ public class DeleteTaskAction extends AnAction {
                             taskFile.delete(this);
                         }
                         manager.removeConfiguration(manager.getSelectedConfiguration());
-                        ArchiveAction.setOtherConfiguration(manager, task);
+                        ArchiveAction.setOtherConfiguration(manager, task, project);
                     } catch (IOException ignored) {
                     }
                 }
