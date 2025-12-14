@@ -49,7 +49,11 @@ public class TopCoderConfiguration extends ModuleBasedConfiguration<JavaRunConfi
     @Override
     public List<BeforeRunTask<?>> getBeforeRunTasks() {
         List<BeforeRunTask<?>> result = new ArrayList<>(super.getBeforeRunTasks());
-        result.add(new MakeProjectStepBeforeRun.MakeProjectBeforeRunTask());
+        boolean hasMakeProjectStep = result.stream()
+                .anyMatch(task -> task instanceof MakeProjectStepBeforeRun.MakeProjectBeforeRunTask);
+        if (!hasMakeProjectStep) {
+            result.add(new MakeProjectStepBeforeRun.MakeProjectBeforeRunTask());
+        }
         return result;
     }
 
