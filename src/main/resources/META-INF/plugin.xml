@@ -7,6 +7,10 @@
 
     <depends>com.intellij.modules.java</depends>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="net.egork.chelper.CHelperStartupActivity"/>
+    </extensions>
+
     <actions>
         <!-- Add your actions here -->
         <action id="newTaskCustom" class="net.egork.chelper.actions.NewTaskAction" text="Task"
