@@ -4,7 +4,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBList;
 import net.egork.chelper.ProjectData;
 import net.egork.chelper.parser.Description;
@@ -50,7 +49,7 @@ public class ParseDialog extends JDialog {
 
     private ParseDialog(final Project project) {
         super(null, "Parse Contest", ModalityType.APPLICATION_MODAL);
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/parseContest.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.PARSE_CONTEST));
         ProjectData data = Utilities.getData(project);
         OkCancelPanel contentPanel = new OkCancelPanel(new BorderLayout(5, 5)) {
             @Override

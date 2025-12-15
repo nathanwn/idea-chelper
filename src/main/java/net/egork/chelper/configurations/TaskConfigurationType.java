@@ -4,7 +4,7 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
+import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,6 @@ import javax.swing.*;
  * @author Egor Kulikov (kulikov@devexperts.com)
  */
 public class TaskConfigurationType implements ConfigurationType {
-    private static final Icon ICON = IconLoader.getIcon("/icons/taskIcon.png");
     private final ConfigurationFactory factory;
     public static TaskConfigurationType INSTANCE;
 
@@ -37,7 +36,7 @@ public class TaskConfigurationType implements ConfigurationType {
     }
 
     public Icon getIcon() {
-        return ICON;
+        return CHelperIcons.TASK;
     }
 
     @NotNull

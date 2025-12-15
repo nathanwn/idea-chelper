@@ -4,8 +4,8 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.task.TopCoderTask;
+import net.egork.chelper.ui.CHelperIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -14,7 +14,6 @@ import javax.swing.*;
  * @author Egor Kulikov (kulikov@devexperts.com)
  */
 public class TopCoderConfigurationType implements ConfigurationType {
-    private static final Icon ICON = IconLoader.getIcon("/icons/topcoder.png");
     private final ConfigurationFactory factory;
     public static TopCoderConfigurationType INSTANCE;
 
@@ -38,7 +37,7 @@ public class TopCoderConfigurationType implements ConfigurationType {
     }
 
     public Icon getIcon() {
-        return ICON;
+        return CHelperIcons.TOPCODER;
     }
 
     @NotNull
