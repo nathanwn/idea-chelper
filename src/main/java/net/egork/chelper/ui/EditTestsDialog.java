@@ -2,7 +2,6 @@ package net.egork.chelper.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import net.egork.chelper.task.Test;
@@ -39,7 +38,7 @@ public class EditTestsDialog extends JDialog {
 
     public EditTestsDialog(Test[] tests, Project project) {
         super(null, "Tests", ModalityType.APPLICATION_MODAL);
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/editTests.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.EDIT_TESTS));
         setAlwaysOnTop(true);
         setResizable(false);
         this.tests = new ArrayList<Test>(Arrays.asList(tests));

@@ -2,7 +2,6 @@ package net.egork.chelper.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.util.FileCreator;
 import net.egork.chelper.util.Provider;
 import net.egork.chelper.util.Utilities;
@@ -28,7 +27,7 @@ public class TestClassesDialog extends JDialog {
     public TestClassesDialog(String[] testClasses, final Project project, final String location, FileCreator fileCreator, final String baseName) {
         super(null, "Test classes", ModalityType.APPLICATION_MODAL);
         this.fileCreator = fileCreator;
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/check.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.CHECK));
         setAlwaysOnTop(true);
         setResizable(false);
         this.testClasses = testClasses;

@@ -1,12 +1,12 @@
 package net.egork.chelper.parser;
 
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.task.StreamConfiguration;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
 import net.egork.chelper.tester.StringInputStream;
+import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.InputReader;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class GCJParser implements Parser {
     public Icon getIcon() {
-        return IconLoader.getIcon("/icons/gcj.png");
+        return CHelperIcons.GCJ;
     }
 
     public String getName() {

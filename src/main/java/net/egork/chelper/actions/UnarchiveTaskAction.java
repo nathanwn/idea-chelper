@@ -8,11 +8,11 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.egork.chelper.codegeneration.CodeGenerationUtilities;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.TopCoderTask;
+import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.*;
 
 import javax.swing.*;
@@ -123,7 +123,7 @@ public class UnarchiveTaskAction extends AnAction {
             int result = JOptionPane.showOptionDialog(null, "Task location is not under source or in default" +
                             "package, do you want to put it in default directory instead?", "Restore task",
                     JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                    IconLoader.getIcon("/icons/restore.png"), null, null);
+                    CHelperIcons.RESTORE, null, null);
             if (result == JOptionPane.YES_OPTION) {
                 String defaultDirectory = Utilities.getData(project).defaultDirectory;
                 baseDirectory = FileUtilities.getFile(project, defaultDirectory);

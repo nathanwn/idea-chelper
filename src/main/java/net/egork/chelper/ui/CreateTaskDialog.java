@@ -25,7 +25,7 @@ public class CreateTaskDialog extends JDialog {
 
     public CreateTaskDialog(Task task, boolean isNewTask, Project project) {
         super(null, "Task", ModalityType.APPLICATION_MODAL);
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/newTask.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.NEW_TASKS));
         setAlwaysOnTop(true);
         setResizable(false);
         this.task = task;

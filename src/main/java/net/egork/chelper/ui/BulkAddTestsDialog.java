@@ -22,7 +22,7 @@ public class BulkAddTestsDialog extends JDialog {
 
     public BulkAddTestsDialog(Project project) {
         super(null, "Bulk Add Tests", ModalityType.APPLICATION_MODAL);
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/editTests.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.EDIT_TESTS));
         setAlwaysOnTop(true);
         setResizable(false);
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));

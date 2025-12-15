@@ -1,11 +1,11 @@
 package net.egork.chelper.parser;
 
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.task.StreamConfiguration;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
+import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.FileUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class CodeforcesParser implements Parser {
     public Icon getIcon() {
-        return IconLoader.getIcon("/icons/codeforces.png");
+        return CHelperIcons.CODEFORCES;
     }
 
     public String getName() {

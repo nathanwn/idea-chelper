@@ -1,11 +1,11 @@
 package net.egork.chelper.parser;
 
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.task.StreamConfiguration;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
+import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.TaskUtilities;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -27,7 +27,7 @@ public class CodeChefParser implements Parser {
     private final static List<String> SPECIAL = Arrays.asList(EASY_ID, MEDIUM_ID, HARD_ID, CHALLENGE_ID, PEER_ID, SCHOOL_ID);
 
     public Icon getIcon() {
-        return IconLoader.getIcon("/icons/codechef.png");
+        return CHelperIcons.CODE_CHEF;
     }
 
     public String getName() {

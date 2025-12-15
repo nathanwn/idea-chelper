@@ -1,7 +1,6 @@
 package net.egork.chelper.ui;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.util.Utilities;
 
@@ -18,7 +17,7 @@ public class EditTCDialog extends JDialog {
 
     public EditTCDialog(TopCoderTask task, Project project) {
         super(null, task.name, ModalityType.APPLICATION_MODAL);
-        setIconImage(Utilities.iconToImage(IconLoader.getIcon("/icons/topcoder.png")));
+        setIconImage(Utilities.iconToImage(CHelperIcons.TOPCODER));
         setAlwaysOnTop(true);
         setResizable(false);
         this.task = task;
