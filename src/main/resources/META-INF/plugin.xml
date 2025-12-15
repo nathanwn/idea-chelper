@@ -12,13 +12,6 @@
         </component>
     </application-components>
 
-    <project-components>
-        <!-- Add your project components here -->
-        <component>
-            <implementation-class>net.egork.chelper.AutoSwitcher</implementation-class>
-        </component>
-    </project-components>
-
     <depends>com.intellij.modules.java</depends>
 
     <actions>

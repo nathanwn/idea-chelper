@@ -4,9 +4,9 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunManagerListener;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.impl.RunManagerImpl;
-import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -14,6 +14,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import net.egork.chelper.configurations.TaskConfiguration;
 import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
@@ -22,34 +23,21 @@ import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.TaskUtilities;
 import net.egork.chelper.util.Utilities;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
  * @author Egor Kulikov (egor@egork.net)
  */
-public class AutoSwitcher implements ProjectComponent {
+@Service(Service.Level.PROJECT)
+public final class AutoSwitcher implements Disposable {
     private final Project project;
-    private boolean busy;
+    private volatile boolean busy;
 
     public AutoSwitcher(Project project) {
         this.project = project;
-    }
 
-    public void initComponent() {
-        // TODO: insert component initialization logic here
-    }
-
-    public void disposeComponent() {
-        // TODO: insert component disposal logic here
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return "AutoSwitcher";
-    }
-
-    public void projectOpened() {
         addSelectedConfigurationListener();
         addFileEditorListeners();
     }
@@ -106,14 +94,14 @@ public class AutoSwitcher implements ProjectComponent {
     }
 
     private void addSelectedConfigurationListener() {
-        RunManagerImpl.getInstanceImpl(project).addRunManagerListener(new RunManagerListener() {
+        MessageBusConnection connection = project.getMessageBus().connect(this);
+        connection.subscribe(RunManagerListener.TOPIC, new RunManagerListener() {
             @Override
-            public void runConfigurationSelected() {
-                RunnerAndConfigurationSettings selectedConfiguration =
-                    RunManagerImpl.getInstanceImpl(project).getSelectedConfiguration();
-                if (selectedConfiguration == null)
+            public void runConfigurationSelected(@Nullable RunnerAndConfigurationSettings settings) {
+                if (settings == null) {
                     return;
-                RunConfiguration configuration = selectedConfiguration.getConfiguration();
+                }
+                RunConfiguration configuration = settings.getConfiguration();
                 if (busy || !(configuration instanceof TopCoderConfiguration || configuration instanceof TaskConfiguration)) {
                     return;
                 }
@@ -125,21 +113,17 @@ public class AutoSwitcher implements ProjectComponent {
                     toOpen = FileUtilities.getFileByFQN(((TaskConfiguration) configuration).getConfiguration().taskClass, configuration.getProject());
                 if (toOpen != null) {
                     final VirtualFile finalToOpen = toOpen;
-                    TransactionGuard.getInstance().submitTransactionAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            FileEditorManager.getInstance(project).openFile(finalToOpen, true);
-                        }
-                    });
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        FileEditorManager.getInstance(project).openFile(finalToOpen, true);
+                    }, project.getDisposed());
                 }
                 busy = false;
             }
         });
     }
 
-
     @Override
-    public void projectClosed() {
-        // called when project is being closed
+    public void dispose() {
+        // pass
     }
 }
