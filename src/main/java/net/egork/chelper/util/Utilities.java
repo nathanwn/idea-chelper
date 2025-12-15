@@ -14,8 +14,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
@@ -32,9 +30,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import net.egork.chelper.ProjectData;
+import net.egork.chelper.ProjectDataManager;
 import net.egork.chelper.actions.TopCoderAction;
 import net.egork.chelper.checkers.TokenChecker;
-import net.egork.chelper.codegeneration.CodeGenerationUtilities;
 import net.egork.chelper.configurations.TaskConfiguration;
 import net.egork.chelper.configurations.TaskConfigurationType;
 import net.egork.chelper.configurations.TopCoderConfiguration;
@@ -51,14 +49,11 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Egor Kulikov (kulikov@devexperts.com)
  */
 public class Utilities {
-    private static Map<Project, ProjectData> eligibleProjects = new HashMap<Project, ProjectData>();
     // TODO: The existence of non-persistent defaultConfiguration together with persistent ProjectData is a bit weird.
     // It would be natural for everything to be persistent.
     private static Task defaultConfiguration = new Task(null, TestType.SINGLE, StreamConfiguration.STANDARD,
@@ -66,31 +61,6 @@ public class Utilities {
             TokenChecker.class.getCanonicalName(), "", new String[0], null, "", true, null, null, false, false,
             "TaskClass.template");
     private static Parser defaultParser = Parser.PARSERS[0];
-
-    public static void addListeners() {
-        ProjectManager.getInstance().addProjectManagerListener(new ProjectManagerAdapter() {
-            @Override
-            public void projectOpened(Project project) {
-                ProjectData configuration = ProjectData.load(project);
-                if (configuration != null) {
-                    eligibleProjects.put(project, configuration);
-                    TopCoderAction.start(project);
-                    ensureLibrary(project);
-                    CodeGenerationUtilities.createTaskClassTemplateIfNeeded(project, null);
-                    CodeGenerationUtilities.createCheckerClassTemplateIfNeeded(project);
-                    CodeGenerationUtilities.createTestCaseClassTemplateIfNeeded(project);
-                    CodeGenerationUtilities.createTopCoderTaskTemplateIfNeeded(project);
-                    CodeGenerationUtilities.createTopCoderTestCaseClassTemplateIfNeeded(project);
-                    checkInstalled(project, configuration);
-                }
-            }
-
-            @Override
-            public void projectClosed(Project project) {
-                eligibleProjects.remove(project);
-            }
-        });
-    }
 
     public static void checkInstalled(Project project, ProjectData configuration) {
         if (!configuration.extensionProposed) {
@@ -136,7 +106,7 @@ public class Utilities {
         return JavaPsiFacade.getInstance(project).findClass(classFQN, GlobalSearchScope.allScope(project));
     }
 
-    private static void ensureLibrary(final Project project) {
+    public static void ensureLibrary(final Project project) {
         final ProjectData data = Utilities.getData(project);
         if (data.libraryVersion == ProjectData.CURRENT_LIBRARY_VERSION) {
             return;
@@ -173,11 +143,10 @@ public class Utilities {
     }
 
     public static boolean isEligible(DataContext dataContext) {
-        return eligibleProjects.containsKey(getProject(dataContext));
-    }
-
-    public static boolean isEligible(Project project) {
-        return eligibleProjects.containsKey(project);
+        // NOTE: This method used to be part of the ApplicationComponent implementation,
+        // which has been removed. Now it's just a no-op.
+        // TODO: Remove this method once it's confirmed that everything still works as expected.
+        return true;
     }
 
     public static Project getProject(DataContext dataContext) {
@@ -197,7 +166,7 @@ public class Utilities {
     }
 
     public static ProjectData getData(Project project) {
-        return eligibleProjects.get(project);
+        return project.getService(ProjectDataManager.class).getData();
     }
 
     public static void openElement(Project project, PsiElement element) {
@@ -256,7 +225,8 @@ public class Utilities {
     }
 
     public static void addProjectData(Project project, ProjectData data) {
-        eligibleProjects.put(project, data);
+        ProjectDataManager projectDataManager = project.getService(ProjectDataManager.class);
+        projectDataManager.setData(data);
     }
 
     public static Image iconToImage(Icon icon) {

@@ -5,13 +5,6 @@
     <vendor>Nathan Nguyen</vendor>
     <idea-version since-build="139.0"/>
 
-    <application-components>
-        <!-- Add your application components here -->
-        <component>
-            <implementation-class>net.egork.chelper.CHelperMain</implementation-class>
-        </component>
-    </application-components>
-
     <depends>com.intellij.modules.java</depends>
 
     <actions>
