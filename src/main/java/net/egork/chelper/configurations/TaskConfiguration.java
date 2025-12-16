@@ -28,7 +28,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.InputMismatchException;
+import java.util.List;
 
 /**
  * @author Egor Kulikov (kulikov@devexperts.com)
@@ -85,6 +88,7 @@ public class TaskConfiguration extends ModuleBasedConfiguration<JavaRunConfigura
                 parameters.configureByModule(module, JavaParameters.JDK_AND_CLASSES);
                 parameters.setWorkingDirectory(getProject().getBaseDir().getPath());
                 parameters.setMainClass("net.egork.chelper.tester.NewTester");
+                parameters.getClassPath().addAll(Utilities.getTesterRequiredJarPaths());
                 String[] vmParameters = configuration.vmArgs.split(" ");
                 for (String parameter : vmParameters)
                     parameters.getVMParametersList().add(parameter);

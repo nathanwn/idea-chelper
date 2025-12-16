@@ -9,46 +9,54 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.PathUtil;
 import net.egork.chelper.ProjectData;
 import net.egork.chelper.ProjectDataManager;
-import net.egork.chelper.actions.TopCoderAction;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.configurations.TaskConfiguration;
 import net.egork.chelper.configurations.TaskConfigurationType;
 import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.configurations.TopCoderConfigurationType;
 import net.egork.chelper.parser.Parser;
-import net.egork.chelper.task.*;
+import net.egork.chelper.task.StreamConfiguration;
+import net.egork.chelper.task.Task;
+import net.egork.chelper.task.Test;
+import net.egork.chelper.task.TestType;
+import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.tester.NewTester;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.BorderLayout;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Egor Kulikov (kulikov@devexperts.com)
@@ -111,35 +119,19 @@ public class Utilities {
         if (data.libraryVersion == ProjectData.CURRENT_LIBRARY_VERSION) {
             return;
         }
-        fixLibrary(project);
         data.completeMigration(project);
     }
 
-    public static void fixLibrary(Project project) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                Class[] neededClasses = {NewTester.class, CojacAgent.class, JsonCreator.class, ObjectMapper.class, com.fasterxml.jackson.core.JsonParser.class};
-                LibraryTable table = ProjectLibraryTable.getInstance(project);
-                Library library = table.getLibraryByName("CHelper");
-                if (library == null) {
-                    library = table.createLibrary("CHelper");
-                }
-                for (Class aClass : neededClasses) {
-                    String path = TopCoderAction.getJarPathForClass(aClass);
-                    VirtualFile jar = VirtualFileManager.getInstance().findFileByUrl(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, path) + JarFileSystem.JAR_SEPARATOR);
-                    Library.ModifiableModel libraryModel = library.getModifiableModel();
-                    libraryModel.addRoot(jar, OrderRootType.CLASSES);
-                    libraryModel.commit();
-                }
-                for (Module module : ModuleManager.getInstance(project).getModules()) {
-                    ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-                    if (model.findLibraryOrderEntry(library) == null) {
-                        model.addLibraryEntry(library);
-                        model.commit();
-                    }
-                }
-            }
-        });
+    public static List<String> getTesterRequiredJarPaths() {
+        return Stream.of(
+            NewTester.class,
+            CojacAgent.class,
+            JsonCreator.class,
+            ObjectMapper.class,
+            com.fasterxml.jackson.core.JsonParser.class
+        )
+                .map((Class<?> cls) -> PathUtil.getJarPathForClass(cls))
+                .collect(Collectors.toList());
     }
 
     public static boolean isEligible(DataContext dataContext) {
