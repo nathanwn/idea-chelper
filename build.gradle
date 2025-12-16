@@ -1,10 +1,13 @@
 plugins {
     id 'java'
-    id "org.jetbrains.intellij" version "1.2.0"
+    id 'org.jetbrains.intellij.platform' version '2.10.5'
 }
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
@@ -16,22 +19,25 @@ dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'org.json:json:20180130'
     implementation fileTree(dir: 'lib', include: ['*.jar'])
+    intellijPlatform {
+        intellijIdea '2023.3'
+        bundledPlugin 'com.intellij.java'
+    }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-intellij {
-    version = '2021.2'
-    plugins = ['com.intellij.java']
-}
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 
-tasks.named('runPluginVerifier') {
-    ideVersions = [
-        'IC-2021.2.4',
-    ]
+intellijPlatform {
+    pluginVerification {
+        ides {
+            create IntelliJPlatformType.IntellijIdea, '2023.3'
+        }
+    }
 }
 
 buildSearchableOptions {
