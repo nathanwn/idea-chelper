@@ -18,7 +18,6 @@ public class EditProjectProperties extends AnAction {
         if (result != null) {
             result.save(project);
             Utilities.addProjectData(project, result);
-            Utilities.fixLibrary(project);
         }
     }
 }
