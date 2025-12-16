@@ -32,19 +32,6 @@ public final class ChromeParser implements Disposable {
 
     static {
         Map<String, Parser> taskParsers = new HashMap<String, Parser>();
-        taskParsers.put("yandex", new YandexParser());
-        taskParsers.put("codeforces", new CodeforcesParser());
-        taskParsers.put("hackerrank", new HackerRankParser());
-        taskParsers.put("facebook", new FacebookParser());
-        taskParsers.put("usaco", new UsacoParser());
-        taskParsers.put("gcj", new GCJParser());
-        taskParsers.put("bayan", new BayanParser());
-        taskParsers.put("kattis", new KattisParser());
-        taskParsers.put("codechef", new CodeChefParser());
-        taskParsers.put("hackerearth", new HackerEarthParser());
-        taskParsers.put("atcoder", new AtCoderParser());
-        taskParsers.put("csacademy", new CSAcademyParser());
-        taskParsers.put("new-gcj", new NewGCJParser());
         taskParsers.put("json", new JSONParser());
         TASK_PARSERS = Collections.unmodifiableMap(taskParsers);
     }
