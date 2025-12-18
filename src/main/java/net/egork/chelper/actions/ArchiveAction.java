@@ -15,9 +15,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import net.egork.chelper.codegeneration.CodeGenerationUtilities;
 import net.egork.chelper.configurations.TaskConfiguration;
-import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.Messenger;
 import net.egork.chelper.util.TaskUtilities;
@@ -39,7 +37,7 @@ public class ArchiveAction extends AnAction {
         final RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings selectedConfiguration =
                 manager.getSelectedConfiguration();
-        if (selectedConfiguration == null || !Utilities.isSupported(selectedConfiguration.getConfiguration())) {
+        if (selectedConfiguration == null || !(selectedConfiguration.getConfiguration() instanceof TaskConfiguration)) {
             Messenger.publishMessage("Configuration not selected or selected configuration not supported",
                     NotificationType.ERROR);
             return;
@@ -99,60 +97,7 @@ public class ArchiveAction extends AnAction {
                     }
                 }
             });
-        } else if (configuration instanceof TopCoderConfiguration) {
-            final TopCoderTask task = ((TopCoderConfiguration) configuration).getConfiguration();
-            String archiveDir = Utilities.getData(project).archiveDirectory;
-            String dateAndContest = getDateAndContest(task);
-            final VirtualFile directory = FileUtilities.createDirectoryIfMissing(project, archiveDir + "/" + dateAndContest);
-            if (directory == null) {
-                return;
-            }
-            CodeGenerationUtilities.createUnitTest(task, project);
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                public void run() {
-                    try {
-                        VirtualFile mainFile = FileUtilities.getFile(project, Utilities.getData(project).defaultDirectory
-                                + "/" + task.name + ".java");
-                        if (mainFile != null) {
-                            VfsUtil.copyFile(this, mainFile, directory);
-                            mainFile.delete(this);
-                        }
-                        for (String testClass : task.testClasses) {
-                            VirtualFile testFile = FileUtilities.getFileByFQN(testClass, project);
-                            if (testFile != null) {
-                                VfsUtil.copyFile(this, testFile, directory);
-                                testFile.delete(this);
-                            }
-                        }
-                        VirtualFile taskFile = FileUtilities.getFile(project, TaskUtilities.getTaskFileLocation(Utilities.getData(project).defaultDirectory, task.name));
-                        if (taskFile != null) {
-                            VfsUtil.copyFile(this, taskFile, directory);
-                            taskFile.delete(this);
-                        }
-                        manager.removeConfiguration(manager.getSelectedConfiguration());
-                        setOtherConfiguration(manager, task, project);
-                        Messenger.publishMessage("Configuration " + configuration.getName() + " successfully archived",
-                                NotificationType.INFORMATION);
-                    } catch (IOException e) {
-                        Messenger.publishMessage("Error archiving configuration '" + configuration.getName() +
-                                "' caused by " + e.getMessage(), NotificationType.ERROR);
-                        Messenger.publishMessage("Configuration not deleted", NotificationType.WARNING);
-                    }
-                }
-            });
         }
-    }
-
-    private String getDateAndContest(TopCoderTask task) {
-        String yearAndMonth = task.date;
-        int position = yearAndMonth.indexOf('.');
-        if (position != -1) {
-            position = yearAndMonth.indexOf('.', position + 1);
-        }
-        if (position != -1) {
-            yearAndMonth = yearAndMonth.substring(0, position);
-        }
-        return TaskUtilities.canonize(yearAndMonth) + "/" + TaskUtilities.canonize(task.date + " - " + (task.contestName.length() == 0 ? "unsorted" : task.contestName));
     }
 
     private String getDateAndContest(Task task) {
@@ -186,30 +131,7 @@ public class ArchiveAction extends AnAction {
         }
         for (RunnerAndConfigurationSettings settings : allSettings) {
             @NotNull RunConfiguration configuration = settings.getConfiguration();
-            if (configuration instanceof TaskConfiguration || configuration instanceof TopCoderConfiguration) {
-                manager.setSelectedConfiguration(settings);
-                return;
-            }
-        }
-    }
-
-    public static void setOtherConfiguration(RunManager manager, TopCoderTask task, Project project) {
-        List<RunnerAndConfigurationSettings> allSettings = RunManager
-                .getInstance(project).getAllSettings();
-        for (RunnerAndConfigurationSettings settings : allSettings) {
-            @NotNull RunConfiguration configuration = settings.getConfiguration();
-            if (configuration instanceof TopCoderConfiguration) {
-                TopCoderTask other = ((TopCoderConfiguration) configuration).getConfiguration();
-                if (!task.contestName.equals(other.contestName)) {
-                    continue;
-                }
-                manager.setSelectedConfiguration(settings);
-                return;
-            }
-        }
-        for (RunnerAndConfigurationSettings settings : allSettings) {
-            @NotNull RunConfiguration configuration = settings.getConfiguration();
-            if (configuration instanceof TaskConfiguration || configuration instanceof TopCoderConfiguration) {
+            if (configuration instanceof TaskConfiguration) {
                 manager.setSelectedConfiguration(settings);
                 return;
             }

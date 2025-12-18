@@ -12,7 +12,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import net.egork.chelper.codegeneration.CodeGenerationUtilities;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 
 import java.io.*;
 import java.net.URL;
@@ -222,18 +221,6 @@ public class FileUtilities {
         return Task.loadTask(new InputReader(getInputStream(getFile(project, fileName))));
     }
 
-    public static TopCoderTask readTopCoderTask(String fileName, Project project) {
-        try {
-            return TaskUtilities.mapper.readValue(getInputStream(getFile(project, fileName)), TopCoderTask.class);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public static TopCoderTask readLegacyTopCoderTask(String fileName, Project project) {
-        return TopCoderTask.load(new InputReader(getInputStream(getFile(project, fileName))));
-    }
-
     public static void saveConfiguration(final String locationName, final String fileName, final Task configuration, final Project project) {
         if (locationName == null) {
             return;
@@ -246,38 +233,6 @@ public class FileUtilities {
     }
 
     public static void saveConfiguration(String fileName, Task configuration, VirtualFile location) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                OutputStream stream = null;
-                try {
-                    VirtualFile file = location.findOrCreateChildData(null, fileName);
-                    stream = file.getOutputStream(null);
-                    TaskUtilities.mapper.writeValue(stream, configuration);
-                } catch (IOException ignored) {
-                } finally {
-                    if (stream != null) {
-                        try {
-                            stream.close();
-                        } catch (IOException ignored) {
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    public static void saveConfiguration(final String locationName, final String fileName, final TopCoderTask configuration, final Project project) {
-        if (locationName == null) {
-            return;
-        }
-        VirtualFile location = FileUtilities.getFile(project, locationName);
-        if (location == null) {
-            return;
-        }
-        saveConfiguration(fileName, configuration, location);
-    }
-
-    public static void saveConfiguration(String fileName, TopCoderTask configuration, VirtualFile location) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
                 OutputStream stream = null;
@@ -356,17 +311,6 @@ public class FileUtilities {
         writeTextFile(directory, name + ".java", mainClass);
         PsiDirectory psiDirectory = getPsiDirectory(project, path);
         String aPackage = getPackage(psiDirectory);
-        String fqn = aPackage + "." + name;
-        Utilities.openElement(project, Utilities.getPsiElement(project, fqn));
-        return fqn;
-    }
-
-    public static String createTopCoderTestClass(Project project, String path, String name) {
-        VirtualFile directory = FileUtilities.createDirectoryIfMissing(project, path);
-        PsiDirectory psiDirectory = getPsiDirectory(project, path);
-        String aPackage = getPackage(psiDirectory);
-        String mainClass = CodeGenerationUtilities.createTopCoderTestStub(project, aPackage, name);
-        writeTextFile(directory, name + ".java", mainClass);
         String fqn = aPackage + "." + name;
         Utilities.openElement(project, Utilities.getPsiElement(project, fqn));
         return fqn;

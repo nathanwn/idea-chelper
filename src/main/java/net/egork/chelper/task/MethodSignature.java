@@ -135,14 +135,6 @@ public class MethodSignature {
         return builder.toString();
     }
 
-    public Object[] generateArguments(TopCoderTest test) {
-        Object[] arguments = new Object[this.arguments.length];
-        for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = resolve(getClass(this.arguments[i]), test.arguments[i]);
-        }
-        return arguments;
-    }
-
     public static Object resolve(Class aClass, String value) {
         value = value.trim();
         if (aClass == int.class) {

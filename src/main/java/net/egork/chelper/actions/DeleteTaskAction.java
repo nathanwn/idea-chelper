@@ -13,9 +13,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import net.egork.chelper.configurations.TaskConfiguration;
-import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.TaskUtilities;
 import net.egork.chelper.util.Utilities;
@@ -72,34 +70,6 @@ public class DeleteTaskAction extends AnAction {
                             }
                         }
                         VirtualFile taskFile = FileUtilities.getFile(project, TaskUtilities.getTaskFileLocation(task.location, task.name));
-                        if (taskFile != null) {
-                            taskFile.delete(this);
-                        }
-                        manager.removeConfiguration(manager.getSelectedConfiguration());
-                        ArchiveAction.setOtherConfiguration(manager, task, project);
-                    } catch (IOException ignored) {
-                    }
-                }
-            });
-        }
-        if (configuration instanceof TopCoderConfiguration) {
-            final TopCoderTask task = ((TopCoderConfiguration) configuration).getConfiguration();
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                public void run() {
-                    try {
-                        VirtualFile mainFile = FileUtilities.getFile(project, Utilities.getData(project).defaultDirectory
-                                + "/" + task.name + ".java");
-                        if (mainFile != null) {
-                            mainFile.delete(this);
-                        }
-                        for (String testClass : task.testClasses) {
-                            PsiElement test = JavaPsiFacade.getInstance(project).findClass(testClass, GlobalSearchScope.allScope(project));
-                            VirtualFile testFile = test == null ? null : test.getContainingFile() == null ? null : test.getContainingFile().getVirtualFile();
-                            if (testFile != null) {
-                                testFile.delete(this);
-                            }
-                        }
-                        VirtualFile taskFile = FileUtilities.getFile(project, TaskUtilities.getTaskFileLocation(Utilities.getData(project).defaultDirectory, task.name));
                         if (taskFile != null) {
                             taskFile.delete(this);
                         }
