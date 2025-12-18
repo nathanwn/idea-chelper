@@ -19,9 +19,6 @@ import net.egork.chelper.util.Utilities;
  */
 public class NewTaskDefaultAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        if (!Utilities.isEligible(e.getDataContext())) {
-            return;
-        }
         Project project = Utilities.getProject(e.getDataContext());
         createTaskInDefaultDirectory(project, null);
     }

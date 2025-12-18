@@ -30,9 +30,6 @@ import java.util.List;
  */
 public class ArchiveAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        if (!Utilities.isEligible(e.getDataContext())) {
-            return;
-        }
         final Project project = Utilities.getProject(e.getDataContext());
         final RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings selectedConfiguration =

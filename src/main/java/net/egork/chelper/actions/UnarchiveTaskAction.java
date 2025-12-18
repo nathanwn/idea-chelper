@@ -24,9 +24,6 @@ import java.util.List;
  */
 public class UnarchiveTaskAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        if (!Utilities.isEligible(e.getDataContext())) {
-            return;
-        }
         final Project project = Utilities.getProject(e.getDataContext());
         FileChooserDescriptor descriptor = new FileChooserDescriptor(
                 true, false, false, false, false, true
