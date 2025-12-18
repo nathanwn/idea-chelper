@@ -17,20 +17,24 @@ dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'org.json:json:20250517'
     intellijPlatform {
-        intellijIdea '2025.2'
+        intellijIdea intellijVersion
         bundledPlugin 'com.intellij.java'
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
+
+version = pluginVersion
 
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 
 intellijPlatform {
     pluginVerification {
+        version = pluginVersion
+
         ides {
             create IntelliJPlatformType.IntellijIdea, '2025.2'
         }
