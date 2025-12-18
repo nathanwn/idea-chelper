@@ -17,9 +17,6 @@ import net.egork.chelper.util.Utilities;
  */
 public class EditTask extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        if (!Utilities.isEligible(e.getDataContext())) {
-            return;
-        }
         Project project = Utilities.getProject(e.getDataContext());
         RunnerAndConfigurationSettings selectedConfiguration =
                 RunManagerImpl.getInstanceImpl(project).getSelectedConfiguration();

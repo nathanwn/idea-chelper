@@ -64,9 +64,6 @@ public class NewTaskAction extends CreateElementActionBase {
 
     @Override
     protected boolean isAvailable(DataContext dataContext) {
-        if (!Utilities.isEligible(dataContext)) {
-            return false;
-        }
         PsiDirectory directory = FileUtilities.getDirectory(dataContext);
         return FileUtilities.isJavaDirectory(directory);
     }

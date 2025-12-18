@@ -23,33 +23,20 @@ import net.egork.chelper.ProjectDataManager;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.configurations.TaskConfiguration;
 import net.egork.chelper.configurations.TaskConfigurationType;
-import net.egork.chelper.parser.Parser;
 import net.egork.chelper.task.StreamConfiguration;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
 import net.egork.chelper.tester.NewTester;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,13 +73,6 @@ public class Utilities {
         )
                 .map((Class<?> cls) -> PathUtil.getJarPathForClass(cls))
                 .collect(Collectors.toList());
-    }
-
-    public static boolean isEligible(DataContext dataContext) {
-        // NOTE: This method used to be part of the ApplicationComponent implementation,
-        // which has been removed. Now it's just a no-op.
-        // TODO: Remove this method once it's confirmed that everything still works as expected.
-        return true;
     }
 
     public static Project getProject(DataContext dataContext) {

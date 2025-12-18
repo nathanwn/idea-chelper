@@ -16,9 +16,6 @@ import net.egork.chelper.util.Utilities;
  */
 public class BulkAddTests extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        if (!Utilities.isEligible(e.getDataContext())) {
-            return;
-        }
         Project project = Utilities.getProject(e.getDataContext());
         RunnerAndConfigurationSettings selectedConfiguration =
                 RunManagerImpl.getInstanceImpl(project).getSelectedConfiguration();
@@ -26,8 +23,7 @@ public class BulkAddTests extends AnAction {
             return;
         }
         RunConfiguration configuration = selectedConfiguration.getConfiguration();
-        if (configuration instanceof TaskConfiguration) {
-            TaskConfiguration taskConfiguration = (TaskConfiguration) configuration;
+        if (configuration instanceof TaskConfiguration taskConfiguration) {
             Task task = taskConfiguration.getConfiguration();
             taskConfiguration.setConfiguration(task.setTests(BulkAddTestsDialog.show(project, task.tests)));
         }
