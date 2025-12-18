@@ -18,7 +18,6 @@ public final class ProjectDataManager {
             CodeGenerationUtilities.createTaskClassTemplateIfNeeded(project, null);
             CodeGenerationUtilities.createCheckerClassTemplateIfNeeded(project);
             CodeGenerationUtilities.createTestCaseClassTemplateIfNeeded(project);
-            Utilities.checkInstalled(project, configuration);
         });
     }
 
