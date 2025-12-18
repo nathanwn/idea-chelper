@@ -4,7 +4,6 @@ import com.intellij.codeInsight.actions.ReformatCodeProcessor;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import net.egork.chelper.task.*;
@@ -12,7 +11,6 @@ import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.Messenger;
 import net.egork.chelper.util.Utilities;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -580,46 +578,4 @@ public class SolutionGenerator {
             }
         });
     }
-
-    public static void createSourceFile(final Project project, final TopCoderTask task) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                SolutionGenerator generator = new SolutionGenerator(
-                        new HashSet<String>(Arrays.asList(Utilities.getData(project).excludedPackages)),
-                        new MainFileTemplate("%IMPORTS%\npublic %INLINED_SOURCE%", Collections.<PsiElement>emptySet(),
-                                Collections.<String>emptySet()), false, getMethod(task, project));
-                String text = generator.createInlinedSource();
-                String outputDirectory = Utilities.getData(project).outputDirectory;
-                VirtualFile directory = FileUtilities.createDirectoryIfMissing(project, outputDirectory);
-                if (directory == null) {
-                    return;
-                }
-                for (VirtualFile file : directory.getChildren()) {
-                    if ("java".equals(file.getExtension())) {
-                        try {
-                            file.delete(null);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-                final VirtualFile file = FileUtilities.writeTextFile(directory, task.name + ".java", text);
-                FileUtilities.synchronizeFile(file);
-                ReformatCodeProcessor processor = new ReformatCodeProcessor(PsiManager.getInstance(project).findFile(file), false);
-                processor.run();
-                String source = FileUtilities.readTextFile(file);
-                VirtualFile virtualFile = FileUtilities.writeTextFile(LocalFileSystem.getInstance().findFileByPath(System.getProperty("user.home")), ".java", source);
-                new File(virtualFile.getCanonicalPath()).deleteOnExit();
-            }
-        });
-    }
-
-    private static PsiMethod getMethod(TopCoderTask task, Project project) {
-        String[] arguments = new String[task.signature.arguments.length];
-        for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = MethodSignature.getClass(task.signature.arguments[i]).getCanonicalName();
-        }
-        return MainFileTemplate.getMethod(project, task.fqn, task.signature.name, MethodSignature.getClass(task.signature.result).getCanonicalName(), arguments);
-    }
-
 }

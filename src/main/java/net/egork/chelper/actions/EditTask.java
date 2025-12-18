@@ -7,11 +7,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import net.egork.chelper.configurations.TaskConfiguration;
-import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.ui.CreateTaskDialog;
-import net.egork.chelper.ui.EditTCDialog;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.Utilities;
 
@@ -38,11 +35,6 @@ public class EditTask extends AnAction {
             if (task != null) {
                 taskConfiguration.setConfiguration(task);
             }
-        }
-        if (configuration instanceof TopCoderConfiguration) {
-            TopCoderConfiguration taskConfiguration = (TopCoderConfiguration) configuration;
-            TopCoderTask task = taskConfiguration.getConfiguration();
-            taskConfiguration.setConfiguration(EditTCDialog.show(project, task));
         }
     }
 }

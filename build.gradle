@@ -18,7 +18,6 @@ dependencies {
     implementation 'commons-lang:commons-lang:2.6'
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'org.json:json:20180130'
-    implementation fileTree(dir: 'lib', include: ['*.jar'])
     intellijPlatform {
         intellijIdea '2023.3'
         bundledPlugin 'com.intellij.java'

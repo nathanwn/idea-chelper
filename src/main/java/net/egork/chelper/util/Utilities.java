@@ -23,24 +23,21 @@ import net.egork.chelper.ProjectDataManager;
 import net.egork.chelper.checkers.TokenChecker;
 import net.egork.chelper.configurations.TaskConfiguration;
 import net.egork.chelper.configurations.TaskConfigurationType;
-import net.egork.chelper.configurations.TopCoderConfiguration;
-import net.egork.chelper.configurations.TopCoderConfigurationType;
 import net.egork.chelper.parser.Parser;
 import net.egork.chelper.task.StreamConfiguration;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.tester.NewTester;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
-import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -233,39 +230,11 @@ public class Utilities {
         }
     }
 
-    public static RunnerAndConfigurationSettings createConfiguration(TopCoderTask task, boolean setActive, Project project) {
-        RunManager manager = RunManager.getInstance(project);
-        RunnerAndConfigurationSettings old = manager.findConfigurationByName(task.name);
-        if (old != null) {
-            manager.removeConfiguration(old);
-        }
-        ConfigurationFactory configurationFactory = TopCoderConfigurationType.INSTANCE.getConfigurationFactories()[0];
-        RunnerAndConfigurationSettings settings = manager.createConfiguration(task.name, configurationFactory);
-        RunConfiguration runConfiguration = settings.getConfiguration();
-        if (runConfiguration instanceof TopCoderConfiguration) {
-            TopCoderConfiguration taskConfiguration = (TopCoderConfiguration) runConfiguration;
-            taskConfiguration.setName(task.name);
-            taskConfiguration.setConfiguration(task);
-        } else {
-            throw new IllegalStateException("Factory did not produce TopCoderConfiguration.");
-        }
-
-        manager.addConfiguration(settings);
-        if (setActive) {
-            manager.setSelectedConfiguration(settings);
-        }
-        return settings;
-    }
-
     public static String getSimpleName(String className) {
         int position = className.lastIndexOf('.');
         if (position != -1) {
             className = className.substring(position + 1);
         }
         return className;
-    }
-
-    public static boolean isSupported(RunConfiguration configuration) {
-        return configuration instanceof TaskConfiguration || configuration instanceof TopCoderConfiguration;
     }
 }

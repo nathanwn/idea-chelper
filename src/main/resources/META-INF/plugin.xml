@@ -45,9 +45,6 @@
         <action id="unarchiveTask" class="net.egork.chelper.actions.UnarchiveTaskAction" text="Restore Task"
                 icon="/icons/unarchive.png"
                 description="Restores previously archived task"/>
-        <action id="launchArena" class="net.egork.chelper.actions.TopCoderAction" text="Launch TopCoder Arena"
-                icon="/icons/topcoder.png"
-                description="Launches TopCoder Arena with integrated plugin to interact with idea"/>
         <action id="editTask" class="net.egork.chelper.actions.EditTask" text="Edit Task" icon="/icons/check.png"
                 description="Edit current task"/>
         <action id="bulkAdd" class="net.egork.chelper.actions.BulkAddTests" text="Bulk Add Tests"
@@ -65,7 +62,6 @@
             <reference ref="deleteTask"/>
             <reference ref="unarchiveTask"/>
             <reference ref="codeforces"/>
-            <reference ref="launchArena"/>
             <reference ref="bulkAdd"/>
             <add-to-group group-id="MainToolBar" anchor="after" relative-to-action="ToolbarRunGroup"/>
 
@@ -74,6 +70,5 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <configurationType implementation="net.egork.chelper.configurations.TaskConfigurationType"/>
-        <configurationType implementation="net.egork.chelper.configurations.TopCoderConfigurationType"/>
     </extensions>
 </idea-plugin>

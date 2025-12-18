@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.egork.chelper.codegeneration.CodeGenerationUtilities;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.ui.CHelperIcons;
 import net.egork.chelper.util.*;
 
@@ -52,22 +51,10 @@ public class UnarchiveTaskAction extends AnAction {
                             if (unarchiveTask(taskFile, task, project)) {
                                 return;
                             }
-                        } else if ("tctask".equals(taskFile.getExtension())) {
-                            TopCoderTask task = TopCoderTask.load(new InputReader(taskFile.getInputStream()));
-                            if (unarchiveTask(taskFile, task, project)) {
-                                return;
-                            }
                         } else if ("json".equals(taskFile.getExtension())) {
                             Task task = TaskUtilities.mapper.readValue(FileUtilities.getInputStream(taskFile), Task.class);
-                            if (task.testType == null) {
-                                TopCoderTask topCoderTask = TaskUtilities.mapper.readValue(FileUtilities.getInputStream(taskFile), TopCoderTask.class);
-                                if (unarchiveTask(taskFile, topCoderTask, project)) {
-                                    return;
-                                }
-                            } else {
-                                if (unarchiveTask(taskFile, task, project)) {
-                                    return;
-                                }
+                            if (unarchiveTask(taskFile, task, project)) {
+                                return;
                             }
                         }
                     }
@@ -76,34 +63,6 @@ public class UnarchiveTaskAction extends AnAction {
                 }
             }
         });
-    }
-
-    private boolean unarchiveTask(VirtualFile taskFile, TopCoderTask task, Project project) throws IOException {
-        VirtualFile baseDirectory = FileUtilities.getFile(project, Utilities.getData(project).defaultDirectory);
-        if (baseDirectory == null) {
-            Messenger.publishMessage("Directory where task was located is no longer exists",
-                    NotificationType.ERROR);
-            return true;
-        }
-        FileUtilities.saveConfiguration(TaskUtilities.getTaskFileName(task.name), task, baseDirectory);
-        List<String> toCopy = new ArrayList<String>();
-        VirtualFile mainFile = taskFile.getParent().findChild(task.name + ".java");
-        if (mainFile != null) {
-            FileUtilities.writeTextFile(baseDirectory, task.name + ".java", FileUtilities.readTextFile(mainFile));
-        }
-        Collections.addAll(toCopy, task.testClasses);
-        for (String className : toCopy) {
-            int position = className.lastIndexOf('.');
-            if (position != -1) {
-                className = className.substring(position + 1);
-            }
-            VirtualFile file = taskFile.getParent().findChild(className + ".java");
-            if (file != null) {
-                FileUtilities.writeTextFile(baseDirectory, className + ".java", FileUtilities.readTextFile(file));
-            }
-        }
-        Utilities.createConfiguration(task, true, project);
-        return false;
     }
 
     private boolean unarchiveTask(VirtualFile taskFile, Task task, Project project) throws IOException {

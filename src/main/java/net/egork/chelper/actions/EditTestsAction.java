@@ -7,11 +7,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import net.egork.chelper.configurations.TaskConfiguration;
-import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.ui.EditTestsDialog;
-import net.egork.chelper.ui.TopCoderEditTestsDialog;
 import net.egork.chelper.util.Utilities;
 
 /**
@@ -33,11 +30,6 @@ public class EditTestsAction extends AnAction {
             TaskConfiguration taskConfiguration = (TaskConfiguration) configuration;
             Task task = taskConfiguration.getConfiguration();
             taskConfiguration.setConfiguration(task.setTests(EditTestsDialog.editTests(task.tests, project)));
-        }
-        if (configuration instanceof TopCoderConfiguration) {
-            TopCoderConfiguration taskConfiguration = (TopCoderConfiguration) configuration;
-            TopCoderTask task = taskConfiguration.getConfiguration();
-            taskConfiguration.setConfiguration(task.setTests(TopCoderEditTestsDialog.editTests(task, project)));
         }
     }
 }

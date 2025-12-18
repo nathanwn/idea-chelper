@@ -16,12 +16,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import net.egork.chelper.configurations.TaskConfiguration;
-import net.egork.chelper.configurations.TopCoderConfiguration;
 import net.egork.chelper.task.Task;
-import net.egork.chelper.task.TopCoderTask;
 import net.egork.chelper.util.FileUtilities;
-import net.egork.chelper.util.TaskUtilities;
-import net.egork.chelper.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,14 +58,7 @@ public final class AutoSwitcher implements Disposable {
                                 .getInstance(project).getAllSettings();
                         for (RunnerAndConfigurationSettings settings : allSettings) {
                             @NotNull RunConfiguration configuration = settings.getConfiguration();
-                            if (configuration instanceof TopCoderConfiguration) {
-                                TopCoderTask task = ((TopCoderConfiguration) configuration).getConfiguration();
-                                if (task != null && file.equals(TaskUtilities.getFile(Utilities.getData(project).defaultDirectory, task.name, project))) {
-                                    busy = true;
-                                    runManager.setSelectedConfiguration(settings);
-                                    busy = false;
-                                }
-                            } else if (configuration instanceof TaskConfiguration) {
+                            if (configuration instanceof TaskConfiguration) {
                                 Task task = ((TaskConfiguration) configuration).getConfiguration();
                                 if (task != null && file.equals(FileUtilities.getFileByFQN(task.taskClass, configuration.getProject()))) {
                                     busy = true;
@@ -102,15 +91,12 @@ public final class AutoSwitcher implements Disposable {
                     return;
                 }
                 RunConfiguration configuration = settings.getConfiguration();
-                if (busy || !(configuration instanceof TopCoderConfiguration || configuration instanceof TaskConfiguration)) {
+                if (busy || !(configuration instanceof TaskConfiguration)) {
                     return;
                 }
                 busy = true;
-                VirtualFile toOpen = null;
-                if (configuration instanceof TopCoderConfiguration)
-                    toOpen = TaskUtilities.getFile(Utilities.getData(project).defaultDirectory, ((TopCoderConfiguration) configuration).getConfiguration().name, project);
-                else if (configuration instanceof TaskConfiguration)
-                    toOpen = FileUtilities.getFileByFQN(((TaskConfiguration) configuration).getConfiguration().taskClass, configuration.getProject());
+                VirtualFile toOpen = FileUtilities
+                        .getFileByFQN(((TaskConfiguration) configuration).getConfiguration().taskClass, configuration.getProject());
                 if (toOpen != null) {
                     final VirtualFile finalToOpen = toOpen;
                     ApplicationManager.getApplication().invokeLater(() -> {
