@@ -61,11 +61,6 @@ public class TaskConfiguration extends ModuleBasedConfiguration<JavaRunConfigura
     }
 
     @Override
-    protected ModuleBasedConfiguration createInstance() {
-        return new TaskConfiguration(getName(), getProject(), configuration, getFactory());
-    }
-
-    @Override
     public Collection<Module> getAllModules() {
         return getValidModules();
     }
