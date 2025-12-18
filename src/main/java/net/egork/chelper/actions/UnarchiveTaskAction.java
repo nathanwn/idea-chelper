@@ -4,9 +4,8 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import net.egork.chelper.codegeneration.CodeGenerationUtilities;
@@ -29,19 +28,16 @@ public class UnarchiveTaskAction extends AnAction {
             return;
         }
         final Project project = Utilities.getProject(e.getDataContext());
-        FileChooserDialog dialog = FileChooserFactory.getInstance().createFileChooser(new FileChooserDescriptor(true, false, false, false, false, true) {
-            @Override
-            public boolean isFileSelectable(VirtualFile file) {
-                return super.isFileSelectable(file) && ("task".equals(file.getExtension()) || "tctask".equals(file.getExtension()) || "json".equals(file.getExtension()));
-            }
-
-            @Override
-            public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-                return super.isFileVisible(file, showHiddenFiles) &&
-                        (file.isDirectory() || "task".equals(file.getExtension()) || "tctask".equals(file.getExtension()) || "json".equals(file.getExtension()));
-            }
-        }, project, null);
-        final VirtualFile[] files = dialog.choose(FileUtilities.getFile(project, Utilities.getData(project).archiveDirectory), project);
+        FileChooserDescriptor descriptor = new FileChooserDescriptor(
+                true, false, false, false, false, true
+        )
+            .withTitle("Select Task Files")
+            .withDescription("Choose .task, or .json files")
+            .withFileFilter(file ->
+                                "task".equalsIgnoreCase(file.getExtension()) ||
+                                "json".equalsIgnoreCase(file.getExtension()));
+        VirtualFile archiveDir = FileUtilities.getFile(project, Utilities.getData(project).archiveDirectory);
+        VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, archiveDir);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
                 try {
