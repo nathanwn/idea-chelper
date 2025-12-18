@@ -55,7 +55,7 @@ public class ParseDialog extends JDialog {
             @Override
             public void onOk() {
                 List<Task> list = new ArrayList<Task>();
-                Object[] tasks = taskList.getSelectedValues();
+                List<?> tasks = taskList.getSelectedValuesList();
                 Parser parser = (Parser) parserCombo.getSelectedItem();
                 ProjectData data = Utilities.getData(project);
                 for (Object taskDescription : tasks) {
