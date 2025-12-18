@@ -26,7 +26,7 @@ There is not yet a plan to publish this fork to the JetBrains Marketplace.
 
 ## About this fork
 
-This fork is a continuation of the original [CHelper plugin by Egor Kulikov](https://github.com/EgorKulikov/chelper). Unfortunately, the maintenance of the original plugin has been largely inactive since 2018. This fork builds upon the work of [algobot76](https://github.com/algobot76/idea-chelperx), who did a good job migrating the project to Gradle.
+This fork is a continuation of the original [CHelper plugin by Egor Kulikov](https://github.com/EgorKulikov/idea-chelper). Unfortunately, the maintenance of the original plugin has been largely inactive since 2018. This fork builds upon the work of [algobot76](https://github.com/algobot76/idea-chelperx), who did a good job migrating the project to Gradle.
 
 The goal of this fork is to keep the plugin compatible with the most recent IntelliJ IDEA releases (2025+) and fix bugs that arise from IntelliJ Platform API changes.
 
