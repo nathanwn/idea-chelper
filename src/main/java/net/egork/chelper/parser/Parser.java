@@ -10,9 +10,6 @@ import java.util.Collection;
  * @author Egor Kulikov (kulikov@devexperts.com)
  */
 public interface Parser {
-    public static final Parser[] PARSERS = {new CodeforcesParser(), new TimusParser(),
-            new RCCParser()};
-
     public Icon getIcon();
 
     public String getName();
