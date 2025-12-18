@@ -37,7 +37,6 @@ public class TaskConfigurationPanel extends JPanel {
     //advanced
     private DirectorySelector location;
     private JTextField vmArgs;
-    private JCheckBox failOnOverflow;
     private JTextField mainClass;
     private SelectOrCreateClass taskClass;
     private SelectOrCreateClass checkerClass;
@@ -235,9 +234,6 @@ public class TaskConfigurationPanel extends JPanel {
         rightAdvanced.add(new JLabel("VM arguments:"));
         vmArgs = new JTextField(task.vmArgs);
         rightAdvanced.add(vmArgs);
-        failOnOverflow = new JCheckBox("Fail on integer overflow");
-        failOnOverflow.setSelected(task.failOnOverflow);
-        rightAdvanced.add(failOnOverflow);
         rightAdvanced.add(new JLabel("Test class:"));
         JPanel testClassPanel = new JPanel(new BorderLayout());
         hasTestCase = new JCheckBox();
@@ -295,7 +291,7 @@ public class TaskConfigurationPanel extends JPanel {
                 task.tests, location.getText(), vmArgs.getText(), mainClass.getText(),
                 taskClass.getText(), checkerClass.getText(), checkerParameters.getText(), getTestClass(),
                 date.getText(), contestName.getText(), truncate.isSelected(), task.inputClass, task.outputClass,
-                includeLocale.isSelected(), failOnOverflow.isSelected(), template.getText(), isInteractive.isSelected(), interactor.getText());
+                includeLocale.isSelected(), false, template.getText(), isInteractive.isSelected(), interactor.getText());
     }
 
     private String[] getTestClass() {

@@ -92,10 +92,6 @@ public class TaskConfiguration extends ModuleBasedConfiguration<JavaRunConfigura
                 String[] vmParameters = configuration.vmArgs.split(" ");
                 for (String parameter : vmParameters)
                     parameters.getVMParametersList().add(parameter);
-                if (configuration.failOnOverflow) {
-                    String path = TopCoderAction.getJarPathForClass(com.github.cojac.CojacAgent.class);
-                    parameters.getVMParametersList().add("-javaagent:" + path + "=-Cints -Clongs -Ccasts -Cmath -Xb com.fasterxml.jackson.");
-                }
                 String taskFileName = TaskUtilities.getTaskFileLocation(configuration.location, configuration.name);
                 parameters.getProgramParametersList().add(taskFileName);
                 if (Utilities.getData(getProject()).smartTesting) {

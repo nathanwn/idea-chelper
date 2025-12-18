@@ -2,7 +2,6 @@ package net.egork.chelper.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cojac.CojacAgent;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -125,7 +124,6 @@ public class Utilities {
     public static List<String> getTesterRequiredJarPaths() {
         return Stream.of(
             NewTester.class,
-            CojacAgent.class,
             JsonCreator.class,
             ObjectMapper.class,
             com.fasterxml.jackson.core.JsonParser.class

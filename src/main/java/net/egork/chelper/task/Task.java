@@ -38,7 +38,7 @@ public class Task {
     public final String inputClass;
     public final String outputClass;
     public final boolean includeLocale;
-    public final boolean failOnOverflow;
+    public final boolean failOnOverflow;  // This field is no longer in use. Keeping around for now to avoid potential compatibility issues.
     public final boolean interactive;
     public final String interactor;
 
