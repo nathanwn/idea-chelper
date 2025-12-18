@@ -137,8 +137,10 @@ public class NewTester {
         return ok;
     }
 
-    private static void runInteractiveTask(List<Verdict> verdicts, Task task, Class readerClass, Class writerClass,
-                                           Class taskClass, Class interactorClass, Test test, boolean truncate) throws IOException,
+    private static void runInteractiveTask(List<Verdict> verdicts, Task task,
+                                           Class<?> readerClass, Class<?> writerClass,
+                                           Class<?> taskClass, Class<?> interactorClass,
+                                           Test test, boolean truncate) throws IOException,
             NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         PipedInputStream interactorToSolutionInputStream = new PipedInputStream();
         PipedOutputStream interactorToSolutionOutputStream = new PipedOutputStream(interactorToSolutionInputStream) {
@@ -174,8 +176,8 @@ public class NewTester {
         };
         Object in = readerClass.getConstructor(InputStream.class).newInstance(interactorToSolutionInputStream);
         Object out = writerClass.getConstructor(OutputStream.class).newInstance(solutionToInteractorOutputStream);
-        Object interactor = interactorClass.newInstance();
-        Object solution = taskClass.newInstance();
+        Object interactor = interactorClass.getDeclaredConstructor().newInstance();
+        Object solution = taskClass.getDeclaredConstructor().newInstance();
         InputStream input = new StringInputStream(test.input);
         System.out.println("Input:");
         print(test.input, truncate);
