@@ -11,13 +11,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.7.0'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.7.4'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
-    implementation 'org.apache.commons:commons-lang3:3.7'
-    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
     implementation 'org.jetbrains:annotations:19.0.0'
-    implementation 'org.json:json:20180130'
+    implementation 'org.json:json:20250517'
     intellijPlatform {
         intellijIdea '2025.2'
         bundledPlugin 'com.intellij.java'
