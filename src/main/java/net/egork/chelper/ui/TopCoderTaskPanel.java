@@ -23,7 +23,6 @@ public class TopCoderTaskPanel extends JPanel {
     private JTextField contestName = new JTextField();
     private JCheckBox hasTestCase = new JCheckBox();
     private SelectOrCreateClass testClass;
-    private JCheckBox failOnOverflow = new JCheckBox("Fail on integer overflow");
 
     public TopCoderTaskPanel(final Project project, TopCoderTask task) {
         super(new VerticalFlowLayout());
@@ -68,14 +67,12 @@ public class TopCoderTaskPanel extends JPanel {
         });
         testClassPanel.add(testClass, BorderLayout.CENTER);
         add(testClassPanel);
-        add(failOnOverflow);
-        failOnOverflow.setSelected(task.failOnOverflow);
     }
 
     private void refresh() {
         task = new TopCoderTask(task.name, task.signature, this.task.tests, date.getText(), contestName.getText(),
                 hasTestCase.isSelected() ? new String[]{testClass.getText()} : new String[0], task.fqn,
-                failOnOverflow.isSelected(), task.memoryLimit);
+                false, task.memoryLimit);
     }
 
     public TopCoderTask getTask() {
