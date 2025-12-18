@@ -64,7 +64,6 @@ public class Utilities {
             StreamConfiguration.STANDARD, new Test[0], null, "-Xmx256m -Xss64m", "Main", null,
             TokenChecker.class.getCanonicalName(), "", new String[0], null, "", true, null, null, false, false,
             "TaskClass.template");
-    private static Parser defaultParser = Parser.PARSERS[0];
 
     public static void checkInstalled(Project project, ProjectData configuration) {
         if (!configuration.extensionProposed) {
@@ -201,14 +200,6 @@ public class Utilities {
             manager.setSelectedConfiguration(settings);
         }
         return settings;
-    }
-
-    public static Parser getDefaultParser() {
-        return defaultParser;
-    }
-
-    public static void setDefaultParser(Parser defaultParser) {
-        Utilities.defaultParser = defaultParser;
     }
 
     public static void addProjectData(Project project, ProjectData data) {
