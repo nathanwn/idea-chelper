@@ -19,7 +19,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
     implementation 'org.json:json:20180130'
     intellijPlatform {
-        intellijIdea '2023.3'
+        intellijIdea '2025.2'
         bundledPlugin 'com.intellij.java'
     }
 }
@@ -34,7 +34,7 @@ import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 intellijPlatform {
     pluginVerification {
         ides {
-            create IntelliJPlatformType.IntellijIdea, '2023.3'
+            create IntelliJPlatformType.IntellijIdea, '2025.2'
         }
     }
 }
