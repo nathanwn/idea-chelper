@@ -41,19 +41,20 @@ public class FileSelector extends JPanel {
         };
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                VirtualFile baseDir = FileUtilities.getBaseDir(project);
                 PathChooserDialog dialog = FileChooserFactory.getInstance().createPathChooser(new FileChooserDescriptor(true, false, false, false, false, false) {
                     @Override
                     public boolean isFileSelectable(VirtualFile file) {
                         return super.isFileSelectable(file) &&
-                                (allowAllFiles || FileUtilities.isChild(project.getBaseDir(), file)) &&
+                                (allowAllFiles || FileUtilities.isChild(baseDir, file)) &&
                                 hasCorrectExtension(file);
                     }
 
                     @Override
                     public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
                         return super.isFileVisible(file, showHiddenFiles) &&
-                                (allowAllFiles || (FileUtilities.isChild(project.getBaseDir(), file) ||
-                                        FileUtilities.isChild(file, project.getBaseDir()))) &&
+                                (allowAllFiles || (FileUtilities.isChild(baseDir, file) ||
+                                        FileUtilities.isChild(file, baseDir))) &&
                                 (file.isDirectory() || hasCorrectExtension(file));
                     }
 
@@ -61,14 +62,18 @@ public class FileSelector extends JPanel {
                         return extension.equals(file.getExtension());
                     }
                 }, project, FileSelector.this);
-                VirtualFile toSelect = allowAllFiles ? VfsUtil.findFileByIoFile(new File(textField.getText()), false) : project.getBaseDir().findFileByRelativePath(textField.getText());
+                VirtualFile toSelect = allowAllFiles
+                        ? VfsUtil.findFileByIoFile(new File(textField.getText()), false)
+                        : baseDir.findFileByRelativePath(textField.getText());
                 if (toSelect == null) {
-                    toSelect = project.getBaseDir();
+                    toSelect = baseDir;
                 }
                 dialog.choose(toSelect, new Consumer<List<VirtualFile>>() {
                     public void consume(List<VirtualFile> virtualFiles) {
                         if (virtualFiles.size() == 1) {
-                            String path = allowAllFiles ? virtualFiles.get(0).getPath() : FileUtilities.getRelativePath(project.getBaseDir(), virtualFiles.get(0));
+                            String path = allowAllFiles
+                                    ? virtualFiles.get(0).getPath()
+                                    : FileUtilities.getRelativePath(baseDir, virtualFiles.get(0));
                             if (path != null) {
                                 textField.setText(path);
                             }

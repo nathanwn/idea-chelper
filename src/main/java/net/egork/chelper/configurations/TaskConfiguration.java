@@ -85,7 +85,7 @@ public class TaskConfiguration extends ModuleBasedConfiguration<JavaRunConfigura
                 Module module = ProjectRootManager.getInstance(getProject()).getFileIndex().getModuleForFile(
                         directory.getVirtualFile());
                 parameters.configureByModule(module, JavaParameters.JDK_AND_CLASSES);
-                parameters.setWorkingDirectory(getProject().getBaseDir().getPath());
+                parameters.setWorkingDirectory(FileUtilities.getBaseDir(getProject()).getPath());
                 parameters.setMainClass("net.egork.chelper.tester.NewTester");
                 parameters.getClassPath().addAll(Utilities.getTesterRequiredJarPaths());
                 String[] vmParameters = configuration.vmArgs.split(" ");

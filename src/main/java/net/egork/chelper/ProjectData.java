@@ -70,7 +70,7 @@ public class ProjectData {
         if (project == null) {
             return null;
         }
-        VirtualFile root = project.getBaseDir();
+        VirtualFile root = FileUtilities.getBaseDir(project);
         if (root == null) {
             return null;
         }
@@ -91,7 +91,7 @@ public class ProjectData {
                 if (project == null) {
                     return;
                 }
-                VirtualFile root = project.getBaseDir();
+                VirtualFile root = FileUtilities.getBaseDir(project);
                 if (root == null) {
                     return;
                 }
