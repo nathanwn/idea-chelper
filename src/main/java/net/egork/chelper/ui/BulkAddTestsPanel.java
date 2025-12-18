@@ -28,7 +28,7 @@ public class BulkAddTestsPanel extends JPanel {
         add(new JLabel("Answer files extension:"));
         add(answerExtension);
         add(new JLabel("Directory:"));
-        directorySelector = new DirectorySelector(project, project.getBaseDir().getPath(), true);
+        directorySelector = new DirectorySelector(project, FileUtilities.getBaseDir(project).getPath(), true);
         add(directorySelector);
     }
 

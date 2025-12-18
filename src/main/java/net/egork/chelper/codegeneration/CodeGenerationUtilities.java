@@ -80,7 +80,7 @@ public class CodeGenerationUtilities {
                 "    public void solve(int testNumber, %InputClass% in, %OutputClass% out) {\n" +
                 "    }\n" +
                 "}\n";
-        FileUtilities.writeTextFile(project.getBaseDir(), "TaskClass.template", template);
+        FileUtilities.writeTextFile(FileUtilities.getBaseDir(project), "TaskClass.template", template);
         return template;
     }
 
@@ -102,7 +102,7 @@ public class CodeGenerationUtilities {
                 "        return Verdict.UNDECIDED;\n" +
                 "    }\n" +
                 "}\n";
-        FileUtilities.writeTextFile(project.getBaseDir(), "CheckerClass.template", template);
+        FileUtilities.writeTextFile(FileUtilities.getBaseDir(project), "CheckerClass.template", template);
         return template;
     }
 
@@ -123,7 +123,7 @@ public class CodeGenerationUtilities {
                 "        return Verdict.UNDECIDED;\n" +
                 "    }\n" +
                 "}\n";
-        FileUtilities.writeTextFile(project.getBaseDir(), "InteractorClass.template", template);
+        FileUtilities.writeTextFile(FileUtilities.getBaseDir(project), "InteractorClass.template", template);
         return template;
     }
 
@@ -146,7 +146,7 @@ public class CodeGenerationUtilities {
                 "        return Collections.emptyList();\n" +
                 "    }\n" +
                 "}\n";
-        FileUtilities.writeTextFile(project.getBaseDir(), "TestCaseClass.template", template);
+        FileUtilities.writeTextFile(FileUtilities.getBaseDir(project), "TestCaseClass.template", template);
         return template;
     }
 
@@ -203,7 +203,7 @@ public class CodeGenerationUtilities {
                 String taskFileName = TaskUtilities.getTaskFileName(finalTask.name);
                 FileUtilities.saveConfiguration(taskFileName, finalTask, directory);
                 VirtualFile taskFile = directory.findChild(taskFileName);
-                String taskFilePath = FileUtilities.getRelativePath(project.getBaseDir(), taskFile);
+                String taskFilePath = FileUtilities.getRelativePath(FileUtilities.getBaseDir(project), taskFile);
                 String tester = generateTester(taskFilePath);
                 tester = changePackage(tester, packageName);
                 FileUtilities.writeTextFile(directory, "Main.java", tester);

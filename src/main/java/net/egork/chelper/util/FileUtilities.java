@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -113,8 +114,14 @@ public class FileUtilities {
         return PsiManager.getInstance(project).findDirectory(file);
     }
 
+    public static VirtualFile getBaseDir(Project project) {
+        // This previously used the deprecated API:
+        //     return project.getBaseDir();
+        return ProjectUtil.guessProjectDir(project);
+    }
+
     public static VirtualFile getFile(Project project, String location) {
-        VirtualFile baseDir = project.getBaseDir();
+        VirtualFile baseDir = FileUtilities.getBaseDir(project);
         if (baseDir == null) {
             return null;
         }
@@ -151,26 +158,10 @@ public class FileUtilities {
         return packageName;
     }
 
-    public static String getFQN(PsiDirectory directory, String name) {
-        String packageName = getPackage(directory);
-        if (packageName == null || packageName.length() == 0) {
-            return name;
-        }
-        return packageName + "." + name;
-    }
-
-    public static PsiFile getPsiFile(Project project, String location) {
-        VirtualFile file = getFile(project, location);
-        if (file == null) {
-            return null;
-        }
-        return PsiManager.getInstance(project).findFile(file);
-    }
-
     public static VirtualFile createDirectoryIfMissing(final Project project, final String location) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                VirtualFile baseDir = project.getBaseDir();
+                VirtualFile baseDir = FileUtilities.getBaseDir(project);
                 if (baseDir == null) {
                     return;
                 }

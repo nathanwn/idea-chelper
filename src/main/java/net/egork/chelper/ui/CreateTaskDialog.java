@@ -72,7 +72,7 @@ public class CreateTaskDialog extends JDialog {
         Task defaultTask = template == null ? Utilities.getDefaultTask() : template;
         String name = defaultName == null ? "Task" : defaultName;
         Project project = directory.getProject();
-        String location = FileUtilities.getRelativePath(project.getBaseDir(), directory.getVirtualFile());
+        String location = FileUtilities.getRelativePath(FileUtilities.getBaseDir(project), directory.getVirtualFile());
         ProjectData data = Utilities.getData(project);
         if (defaultTask.inputClass == null) {
             defaultTask = defaultTask.setInputOutputClasses(data.inputClass, data.outputClass).
