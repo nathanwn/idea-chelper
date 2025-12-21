@@ -6,6 +6,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import net.egork.chelper.util.Utilities;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author egor@egork.net
@@ -21,16 +23,20 @@ public class MainFileTemplate extends Template {
     }
 
     public String resolve(String source, String className, Collection<String> additionalImports) {
-        StringBuilder imports = new StringBuilder();
+        Set<String> uniqueImports = new TreeSet<>();
         for (String aImport : this.imports) {
             if (!aImport.matches("java[.]lang[.][^.]*")) {
-                imports.append("import ").append(aImport).append(";\n");
+                uniqueImports.add(aImport);
             }
         }
         for (String aImport : additionalImports) {
             if (!aImport.matches("java[.]lang[.][^.]*")) {
-                imports.append("import ").append(aImport).append(";\n");
+                uniqueImports.add(aImport);
             }
+        }
+        StringBuilder imports = new StringBuilder();
+        for (String aImport : uniqueImports) {
+            imports.append("import ").append(aImport).append(";\n");
         }
         return apply("IMPORTS", imports.toString(), "INLINED_SOURCE", source, "CLASS_NAME", className);
     }
