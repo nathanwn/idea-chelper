@@ -28,8 +28,4 @@ public final class ProjectDataManager {
     public ProjectData getData() {
         return configuration;
     }
-
-    public boolean isEligible() {
-        return configuration != null;
-    }
 }
