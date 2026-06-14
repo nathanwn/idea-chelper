@@ -21,13 +21,32 @@ import java.util.List;
  */
 public class DirectorySelector extends JPanel {
     private final JTextField textField;
-    private JButton button;
+    private final JButton button;
 
+    /**
+     * Creates a UI component for selecting a directory.
+     * @param project      The current IntelliJ project context, used to determine
+     *                     the base directory.
+     * @param initialValue The initial path to display in the text field.
+     *                     This should be a relative path from the project's base directory.
+     */
     public DirectorySelector(final Project project, String initialValue) {
         this(project, initialValue, false);
     }
 
-    public DirectorySelector(final Project project, String initialValue, final boolean allowAllDirectories) {
+    /**
+     * Creates a UI component for selecting a directory.
+     *
+     * @param project                      The current IntelliJ project context, used to determine
+     *                                     the base directory.
+     * @param initialValue                 The initial path to display in the text field.
+     *                                     If {@code allowAllDirectories} is false, this should be a relative
+     *                                     path from the project's base directory.
+     *                                     If true, it should be an absolute path.
+     * @param allowOutsideProjectWorkspace If true, users are allowed to select a directory outside the
+     *                                     project workspace.
+     */
+    public DirectorySelector(final Project project, String initialValue, boolean allowOutsideProjectWorkspace) {
         super(new BorderLayout());
         textField = new JTextField(initialValue);
         button = new JButton("...") {
@@ -42,19 +61,25 @@ public class DirectorySelector extends JPanel {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 VirtualFile baseDir = FileUtilities.getBaseDir(project);
-                PathChooserDialog dialog = FileChooserFactory.getInstance().createPathChooser(new FileChooserDescriptor(false, true, false, false, false, false) {
-                    @Override
-                    public boolean isFileSelectable(VirtualFile file) {
-                        return super.isFileSelectable(file) && (allowAllDirectories || FileUtilities.isChild(baseDir, file));
-                    }
 
-                    @Override
-                    public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-                        return super.isFileVisible(file, showHiddenFiles)
-                            && (allowAllDirectories || (FileUtilities.isChild(baseDir, file) || FileUtilities.isChild(file, baseDir)));
-                    }
-                }, project, DirectorySelector.this);
-                VirtualFile toSelect = allowAllDirectories
+                // Only allow selecting a directory.
+                // If allowAllDirectories is false, restrict the selected directory to be under baseDir.
+                boolean chooseFiles = false;
+                boolean chooseFolders = true;
+                boolean chooseJars = false;
+                boolean chooseJarsAsFiles = false;
+                boolean chooseJarsContents = false;
+                boolean chooseMultiple = false;
+                FileChooserDescriptor descriptor = new FileChooserDescriptor(
+                        chooseFiles, chooseFolders, chooseJars, chooseJarsAsFiles, chooseJarsContents, chooseMultiple)
+                        .withFileFilter(file -> allowOutsideProjectWorkspace || FileUtilities.isChild(baseDir, file));
+                if (!allowOutsideProjectWorkspace) {
+                    descriptor.withRoots(baseDir);
+                }
+
+                PathChooserDialog dialog = FileChooserFactory.getInstance()
+                        .createPathChooser(descriptor, project, DirectorySelector.this);
+                VirtualFile toSelect = allowOutsideProjectWorkspace
                         ? VfsUtil.findFileByIoFile(new File(textField.getText()), false)
                         : baseDir.findFileByRelativePath(textField.getText());
                 if (toSelect == null) {
@@ -63,7 +88,7 @@ public class DirectorySelector extends JPanel {
                 dialog.choose(toSelect, new Consumer<List<VirtualFile>>() {
                     public void consume(List<VirtualFile> virtualFiles) {
                         if (virtualFiles.size() == 1) {
-                            String path = allowAllDirectories
+                            String path = allowOutsideProjectWorkspace
                                     ? virtualFiles.get(0).getPath()
                                     : FileUtilities.getRelativePath(baseDir, virtualFiles.get(0));
                             if (path != null) {
