@@ -21,13 +21,32 @@ import java.util.List;
  */
 public class FileSelector extends JPanel {
     private final JTextField textField;
-    private JButton button;
+    private final JButton button;
 
+    /**
+     * Creates a UI component for selecting a file.
+     * @param project      The current IntelliJ project context, used to determine
+     *                     the base directory.
+     * @param initialValue The initial path to display in the text field.
+     *                     This should be a relative path from the project's base directory.
+     * @param extension    The file extension of the selected file.
+     */
     public FileSelector(final Project project, String initialValue, String extension) {
         this(project, initialValue, extension, false);
     }
 
-    public FileSelector(final Project project, String initialValue, final String extension, final boolean allowAllFiles) {
+    /**
+     * Creates a UI component for selecting a file.
+     * @param project                      The current IntelliJ project context, used to determine
+     *                                     the base directory.
+     * @param initialValue                 The initial path to display in the text field.
+     *                                     This should be a relative path from the project's base directory.
+     * @param extension                    The file extension of the selected file.
+     * @param allowOutsideProjectWorkspace If true, users are allowed to select a file outside the
+     *                                     project workspace.
+     */
+    public FileSelector(final Project project, String initialValue, String extension,
+                        boolean allowOutsideProjectWorkspace) {
         super(new BorderLayout());
         textField = new JTextField(initialValue);
         button = new JButton("...") {
@@ -42,27 +61,26 @@ public class FileSelector extends JPanel {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 VirtualFile baseDir = FileUtilities.getBaseDir(project);
-                PathChooserDialog dialog = FileChooserFactory.getInstance().createPathChooser(new FileChooserDescriptor(true, false, false, false, false, false) {
-                    @Override
-                    public boolean isFileSelectable(VirtualFile file) {
-                        return super.isFileSelectable(file) &&
-                                (allowAllFiles || FileUtilities.isChild(baseDir, file)) &&
-                                hasCorrectExtension(file);
-                    }
 
-                    @Override
-                    public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-                        return super.isFileVisible(file, showHiddenFiles) &&
-                                (allowAllFiles || (FileUtilities.isChild(baseDir, file) ||
-                                        FileUtilities.isChild(file, baseDir))) &&
-                                (file.isDirectory() || hasCorrectExtension(file));
-                    }
+                // Only allow selecting a file.
+                // If allowAllFiles is false, restrict the selected file to be under baseDir.
+                boolean chooseFiles = true;
+                boolean chooseFolders = false;
+                boolean chooseJars = false;
+                boolean chooseJarsAsFiles = false;
+                boolean chooseJarsContents = false;
+                boolean chooseMultiple = false;
+                FileChooserDescriptor descriptor = new FileChooserDescriptor(
+                        chooseFiles, chooseFolders, chooseJars, chooseJarsAsFiles, chooseJarsContents, chooseMultiple)
+                        .withFileFilter(file -> extension.equals(file.getExtension()) &&
+                                (allowOutsideProjectWorkspace || FileUtilities.isChild(baseDir, file)));
+                if (!allowOutsideProjectWorkspace) {
+                    descriptor.withRoots(baseDir);
+                }
 
-                    private boolean hasCorrectExtension(VirtualFile file) {
-                        return extension.equals(file.getExtension());
-                    }
-                }, project, FileSelector.this);
-                VirtualFile toSelect = allowAllFiles
+                PathChooserDialog dialog = FileChooserFactory.getInstance()
+                        .createPathChooser(descriptor, project, FileSelector.this);
+                VirtualFile toSelect = allowOutsideProjectWorkspace
                         ? VfsUtil.findFileByIoFile(new File(textField.getText()), false)
                         : baseDir.findFileByRelativePath(textField.getText());
                 if (toSelect == null) {
@@ -71,7 +89,7 @@ public class FileSelector extends JPanel {
                 dialog.choose(toSelect, new Consumer<List<VirtualFile>>() {
                     public void consume(List<VirtualFile> virtualFiles) {
                         if (virtualFiles.size() == 1) {
-                            String path = allowAllFiles
+                            String path = allowOutsideProjectWorkspace
                                     ? virtualFiles.get(0).getPath()
                                     : FileUtilities.getRelativePath(baseDir, virtualFiles.get(0));
                             if (path != null) {
