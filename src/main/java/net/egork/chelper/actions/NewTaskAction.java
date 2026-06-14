@@ -5,29 +5,28 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
 import net.egork.chelper.task.Task;
 import net.egork.chelper.ui.CreateTaskDialog;
 import net.egork.chelper.util.FileUtilities;
 import net.egork.chelper.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 /**
  * @author Egor Kulikov (kulikov@devexperts.com)
  */
 public class NewTaskAction extends CreateElementActionBase {
-    @NotNull
     @Override
-    protected PsiElement[] invokeDialog(Project project, PsiDirectory psiDirectory) {
-        return create(null, psiDirectory);
+    protected void invokeDialog(@NotNull Project project,
+                                @NotNull PsiDirectory directory,
+                                @NotNull Consumer<? super PsiElement[]> elementsConsumer) {
+        elementsConsumer.accept(create("", directory));
     }
 
-    protected void checkBeforeCreate(String s, PsiDirectory psiDirectory) throws IncorrectOperationException {
-    }
-
     @NotNull
     @Override
-    protected PsiElement[] create(String s, PsiDirectory psiDirectory) {
+    protected PsiElement @NotNull [] create(@NotNull String s, @NotNull PsiDirectory psiDirectory) {
         return createTask(s, psiDirectory, null);
     }
 
@@ -53,13 +52,8 @@ public class NewTaskAction extends CreateElementActionBase {
     }
 
     @Override
-    protected String getCommandName() {
-        return "Task";
-    }
-
-    @Override
-    protected String getActionName(PsiDirectory psiDirectory, String s) {
-        return "New task " + s;
+    protected @NotNull String getActionName(@NotNull PsiDirectory directory, @NotNull String newName) {
+        return "New task " + newName;
     }
 
     @Override
