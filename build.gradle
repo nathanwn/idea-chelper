@@ -36,7 +36,7 @@ intellijPlatform {
         version = pluginVersion
 
         ides {
-            create IntelliJPlatformType.IntellijIdea, '2025.2'
+            create IntelliJPlatformType.IntellijIdea, '2026.1'
         }
     }
 }
