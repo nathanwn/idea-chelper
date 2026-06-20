@@ -10,45 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.util.Collection;
 import java.util.Collections;
 
-public class JSONParser implements Parser {
-    @Override
-    public Icon getIcon() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getName() {
-        return "JSON";
-    }
-
-    @Override
-    public void getContests(DescriptionReceiver receiver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void parseContest(String id, DescriptionReceiver receiver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Task parseTask(Description description) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public TestType defaultTestType() {
-        return TestType.SINGLE;
-    }
-
-    @Override
-    public Collection<Task> parseTaskFromHTML(String html) {
+public class JSONParser {
+    public Collection<Task> parseTasks(String payload) {
         try {
-            JSONObject obj = new JSONObject(html);
+            JSONObject obj = new JSONObject(payload);
 
             String taskName = obj.getString("name");
             String contestName = obj.getString("group");

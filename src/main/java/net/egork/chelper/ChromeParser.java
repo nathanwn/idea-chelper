@@ -67,13 +67,13 @@ public final class ChromeParser implements Disposable {
                                     if (line == null) break;
                                     builder.append(line).append('\n');
                                 }
-                                final String body = builder.toString();
+                                final String payload = builder.toString();
                                 TransactionGuard.getInstance().submitTransactionAndWait(new Runnable() {
                                     public void run() {
                                         if (type.equals("json")) {
-                                            System.err.println(body);
+                                            System.err.println(payload);
                                             JSONParser parser = new JSONParser();
-                                            Collection<Task> tasks = parser.parseTaskFromHTML(body);
+                                            Collection<Task> tasks = parser.parseTasks(payload);
                                             if (tasks.isEmpty()) {
                                                 Messenger.publishMessage("Unable to parse task from " + type, NotificationType.WARNING);
                                                 return;
@@ -89,7 +89,7 @@ public final class ChromeParser implements Disposable {
                                         } else {
                                             Messenger.publishMessage("Unknown task type from Chrome parser: " + type,
                                                     NotificationType.WARNING);
-                                            System.err.println(body);
+                                            System.err.println(payload);
                                         }
                                     }
                                 });
