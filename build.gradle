@@ -27,6 +27,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+// NOTE: Plugin version is set in gradle.properties.
 version = pluginVersion
 
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
@@ -36,7 +37,8 @@ intellijPlatform {
         version = pluginVersion
 
         ides {
-            create IntelliJPlatformType.IntellijIdea, '2026.1'
+            // NOTE: Target IntelliJ version is set in gradle.properties.
+            create IntelliJPlatformType.IntellijIdea, intellijVersion
         }
     }
 }
