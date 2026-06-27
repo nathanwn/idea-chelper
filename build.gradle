@@ -11,20 +11,26 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.0'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.8'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.8'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.8'
     implementation 'org.jetbrains:annotations:19.0.0'
-    implementation 'org.json:json:20250517'
     intellijPlatform {
         intellijIdea intellijVersion
         bundledPlugin 'com.intellij.java'
     }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // NOTE: Plugin version is set in gradle.properties.

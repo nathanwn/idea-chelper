@@ -6,9 +6,8 @@ import net.egork.chelper.task.Task;
 import net.egork.chelper.task.Test;
 import net.egork.chelper.task.TestType;
 import net.egork.chelper.util.TaskUtilities;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,31 +15,32 @@ import java.util.Collections;
 public class JSONParser {
     public Collection<Task> parseTasks(String payload) {
         try {
-            JSONObject obj = new JSONObject(payload);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode obj = mapper.readTree(payload);
 
-            String taskName = obj.getString("name");
-            String contestName = obj.getString("group");
+            String taskName = obj.path("name").asText();
+            String contestName = obj.path("group").asText();
 
-            JSONObject languages = obj.getJSONObject("languages");
-            JSONObject java = languages.getJSONObject("java");
+            JsonNode languages = obj.path("languages");
+            JsonNode java = languages.path("java");
 
-            String mainClass = java.getString("mainClass");
-            String taskClass = TaskUtilities.replaceCyrillics(java.getString("taskClass"));
+            String mainClass = java.path("mainClass").asText();
+            String taskClass = TaskUtilities.replaceCyrillics(java.path("taskClass").asText());
 
-            int memoryLimit = obj.getInt("memoryLimit");
+            int memoryLimit = obj.path("memoryLimit").asInt();
 
-            TestType type = stringToTestType(obj.getString("testType"));
-            StreamConfiguration inputConfig = parseStreamConfiguration(obj.getJSONObject("input"));
-            StreamConfiguration outputConfig = parseStreamConfiguration(obj.getJSONObject("output"));
+            TestType type = stringToTestType(obj.path("testType").asText());
+            StreamConfiguration inputConfig = parseStreamConfiguration(obj.path("input"));
+            StreamConfiguration outputConfig = parseStreamConfiguration(obj.path("output"));
 
-            JSONArray testsArr = obj.getJSONArray("tests");
-            Test[] tests = new Test[testsArr.length()];
+            JsonNode testsArr = obj.path("tests");
+            Test[] tests = new Test[testsArr.size()];
 
-            for (int i = 0, iMax = testsArr.length(); i < iMax; i++) {
-                JSONObject testObj = testsArr.getJSONObject(i);
+            for (int i = 0, iMax = testsArr.size(); i < iMax; i++) {
+                JsonNode testObj = testsArr.get(i);
 
-                String testInput = testObj.getString("input");
-                String testOutput = testObj.getString("output");
+                String testInput = testObj.path("input").asText();
+                String testOutput = testObj.path("output").asText();
 
                 tests[i] = new Test(testInput, testOutput);
             }
@@ -52,23 +52,24 @@ public class JSONParser {
                     null, null, false, false);
 
             return Collections.singleton(task);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             return Collections.emptyList();
         }
     }
 
-    private StreamConfiguration parseStreamConfiguration(JSONObject obj) {
-        String type = obj.getString("type");
+    private StreamConfiguration parseStreamConfiguration(JsonNode obj) {
+        if (obj == null || obj.isMissingNode() || obj.isNull()) return null;
+        String type = obj.path("type").asText();
 
         switch (type) {
             case "stdin":
             case "stdout":
                 return StreamConfiguration.STANDARD;
             case "file":
-                String fileName = obj.getString("fileName");
+                String fileName = obj.path("fileName").asText();
                 return new StreamConfiguration(StreamConfiguration.StreamType.CUSTOM, fileName);
             case "regex":
-                String regex = obj.getString("pattern");
+                String regex = obj.path("pattern").asText();
                 return new StreamConfiguration(StreamConfiguration.StreamType.LOCAL_REGEXP, regex);
         }
 
