@@ -1,7 +1,11 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij.platform' version '2.16.0'
+    id 'org.jetbrains.intellij.platform' version '2.18.1'
 }
+
+group = 'io.github.nathanwn'
+// Plugin version is set in gradle.properties.
+version = pluginVersion
 
 repositories {
     mavenCentral()
@@ -23,12 +27,9 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
-
-// NOTE: Plugin version is set in gradle.properties.
-version = pluginVersion
 
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 
