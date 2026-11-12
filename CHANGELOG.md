@@ -1,7 +1,16 @@
+4.7.0 - 2026-11-12
+==================
+
+This release targets IntelliJ IDEA 2026.2.
+
+### Build
+
+- Upgrade target IntelliJ IDEA version to `2026.2` ([#43](https://github.com/nathanwn/idea-chelper/pull/43)).
+
 4.6.0 - 2026-06-20
 ==================
 
-This release ensures compatibility with IntelliJ IDEA 2026.1, removes various deprecation warnings, and cleans up unused code.
+This release targets IntelliJ IDEA 2026.1, removes various deprecation warnings, and cleans up unused code.
 
 ### Features
 
@@ -11,7 +20,7 @@ This release ensures compatibility with IntelliJ IDEA 2026.1, removes various de
 
 - Remove deprecated APIs of `CreateElementActionBase` ([#40](https://github.com/nathanwn/idea-chelper/pull/40)).
 - Replace deprecated APIs of `FileChooserDescriptor` ([#36](https://github.com/nathanwn/idea-chelper/pull/36)).
-- Clean up dead code ([#35](https://github.com/nathanwn/idea-chelper/pull/35)).
+- Clean up dead code ([#35](https://github.com/nathanwn/idea-chelper/pull/35) and [#41](https://github.com/nathanwn/idea-chelper/pull/41)).
 
 ### Build
 
